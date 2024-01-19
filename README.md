@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Flask React Project
 
 This is the starter for the Flask React project.
@@ -146,3 +147,6 @@ your site just below the name of the Web Service at the top of the page.
 
 [Render.com]: https://render.com/
 [Dashboard]: https://dashboard.render.com/
+=======
+# foodCatering
+>>>>>>> ff2100f39b739158db117ae66c3157f21f5feb30
