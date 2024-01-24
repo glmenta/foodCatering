@@ -18,6 +18,7 @@ class User(db.Model, UserMixin):
     hashed_password = db.Column(db.String(255), nullable=False)
 
     # relationships
+    orders = db.relationship('Order', back_populates='user')
 
     @property
     def password(self):
@@ -37,5 +38,6 @@ class User(db.Model, UserMixin):
             'email': self.email,
             'firstName': self.first_name,
             'lastName': self.last_name,
-            'isAdmin': self.isAdmin
+            'isAdmin': self.isAdmin,
+            'orders': [order.to_dict() for order in self.orders]
         }

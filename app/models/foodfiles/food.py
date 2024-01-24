@@ -1,4 +1,4 @@
-from .db import db, environment, SCHEMA, add_prefix_for_prod
+from ..db import db, environment, SCHEMA, add_prefix_for_prod
 
 
 class Food(db.Model):
@@ -14,7 +14,9 @@ class Food(db.Model):
     isActive = db.Column(db.Boolean, nullable=False, default=True)
 
     food_orders = db.relationship('FoodOrder', back_populates='food', cascade="all, delete")
+    food_images = db.relationship('FoodImage', back_populates='food', cascade="all, delete")
     created_at = db.Column(db.DateTime, nullable=False)
+    updated_at = db.Column(db.DateTime, nullable=False)
 
     def to_dict(self):
         return {
@@ -22,5 +24,8 @@ class Food(db.Model):
             'name': self.name,
             'price': self.price,
             'description': self.description,
-            'isActive': self.isActive
+            'isActive': self.isActive,
+            'food_images': [foodImage.to_dict() for foodImage in self.food_images],
+            'created_at': self.created_at,
+            'updated_at': self.updated_at
         }
