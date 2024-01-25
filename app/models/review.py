@@ -10,20 +10,19 @@ class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('users.id')), nullable=False)
     food_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('foods.id')), nullable=False)
-    rating = db.Column(db.Integer, nullable=False)
     review = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
     user = db.relationship('User', back_populates='reviews')
     food = db.relationship('Food', back_populates='reviews')
+    star_ratings = db.relationship('starRating', back_populates='review')
 
     def to_dict(self):
         return {
             'id': self.id,
             'user_id': self.user_id,
             'food_id': self.food_id,
-            'rating': self.rating,
             'review': self.review,
             'created_at': self.created_at,
             'updated_at': self.updated_at
@@ -39,7 +38,7 @@ class starRating (db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('users.id')), nullable=False)
     food_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('foods.id')), nullable=False)
     review_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('reviews.id')), nullable=False)
-    avg_rating = db.Column(db.Integer, nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
@@ -52,7 +51,7 @@ class starRating (db.Model):
             'id': self.id,
             'user_id': self.user_id,
             'food_id': self.food_id,
-            'avg_rating': self.avg_rating,
+            'rating': self.rating,
             'created_at': self.created_at,
             'updated_at': self.updated_at
         }

@@ -1,6 +1,12 @@
 from .db import db, environment, SCHEMA, add_prefix_for_prod
 from datetime import datetime
 
+food_menu_foods = db.Table(
+    'food_menu_foods',
+    db.Column('food_id', db.Integer, db.ForeignKey('foods.id')),
+    db.Column('food_menu_id', db.Integer, db.ForeignKey('food_menus.id'))
+    )
+
 class Food(db.Model):
     __tablename__ = 'foods'
 
@@ -16,6 +22,9 @@ class Food(db.Model):
     food_orders = db.relationship('FoodOrder', back_populates='food', cascade="all, delete")
     food_images = db.relationship('FoodImage', back_populates='food', cascade="all, delete")
     food_menus = db.relationship('FoodMenu', secondary='food_menu_foods', back_populates='foods')
+    reviews = db.relationship('Review', back_populates='food', cascade="all, delete")
+    star_ratings = db.relationship('starRating', back_populates='food', cascade="all, delete")
+
     created_at = db.Column(db.DateTime, nullable=False)
     updated_at = db.Column(db.DateTime, nullable=False)
 
@@ -46,7 +55,7 @@ class FoodMenu(db.Model):
         return {
             'id': self.id,
             'day_id': self.day_id,
-            'day': self.day.to_dict(),
+            'day': self.day.to_dict() if self.day else None,
             'foods': [food.to_dict() for food in self.foods],
             'created_at': self.created_at,
             'updated_at': self.updated_at
@@ -57,17 +66,19 @@ class FoodOrder(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     order_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('orders.id')), nullable=False)
+    food_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('foods.id')), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
     food = db.relationship('Food', back_populates='food_orders')
-    order = db.relationship('Order', back_populates='food_orders')
+    orders = db.relationship('Order', back_populates='food_orders')
 
     def to_dict(self):
         return {
             'id': self.id,
             'order_id': self.order_id,
+            'food_id': self.food_id,
             'quantity': self.quantity,
             'food': self.food.to_dict(),
             'created_at': self.created_at,

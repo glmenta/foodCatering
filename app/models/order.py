@@ -15,8 +15,7 @@ class Order(db.Model):
     created_at = db.Column(db.DateTime, nullable=False)
     updated_at = db.Column(db.DateTime, nullable=False)
 
-    user = db.relationship('User', back_populates='orders')
-    food_orders = db.relationship('FoodOrder', back_populates='order')
+
 
     def to_dict(self):
         return {
@@ -27,3 +26,6 @@ class Order(db.Model):
             'updatedAt': self.updated_at,
             'foodOrders': [foodOrder.to_dict() for foodOrder in self.food_orders]
         }
+
+    users = db.relationship('User', back_populates='orders')
+    food_orders = db.relationship('FoodOrder', back_populates='orders', cascade="all, delete-orphan")

@@ -2,7 +2,6 @@ from .db import db, environment, SCHEMA, add_prefix_for_prod
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
-
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
 
@@ -18,8 +17,9 @@ class User(db.Model, UserMixin):
     hashed_password = db.Column(db.String(255), nullable=False)
 
     # relationships
-    orders = db.relationship('Order', back_populates='user')
-
+    orders = db.relationship('Order', back_populates='users', cascade='all, delete-orphan')
+    reviews = db.relationship('Review', back_populates='user', cascade='all, delete-orphan')
+    star_ratings = db.relationship('starRating', back_populates='user', cascade='all, delete-orphan')
     @property
     def password(self):
         return self.hashed_password
