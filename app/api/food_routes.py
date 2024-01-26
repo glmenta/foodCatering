@@ -4,7 +4,7 @@ from app.models.review import starRating, Review
 from app.models.user import User
 from ..models.db import db
 from flask_login import login_required, current_user
-from ..forms.food_form import FoodForm
+from ..forms.food_form import FoodForm, EditFoodForm
 from urllib.parse import urlsplit
 import os
 
@@ -112,13 +112,47 @@ def create_food():
 @food_routes.route('/<int:id>/edit', methods=['PUT'])
 @login_required
 def update_food(id):
-    pass
+    user_id = current_user.id
+    curr_food = Food.query.get(id)
+    check_admin = User.query.filter(User.isAdmin ==True, User.id == user_id).first()
+    if curr_food is None:
+        return jsonify({'error': 'Food not found'}), 404
+    if not check_admin or not check_admin.isAdmin:
+        return jsonify({'error': 'You must be an admin to create food'}), 401
+    else:
+        if current_user.id != curr_food.user_id:
+            return jsonify({'error': 'You cannot edit another user\'s food'}), 401
+
+    data = request.get_json()
+    form = EditFoodForm(data=data)
+    form['csrf_token'].data = request.cookies['csrf_token']
+    if form.validate():
+        curr_food.name = data.get('name')
+        curr_food.description = data.get('description')
+        curr_food.price = data.get('price')
+        db.session.commit()
+
+        return {
+            'message': 'Food updated successfully',
+            'food': curr_food.to_dict()
+        }, 200
+
+    else:
+        return jsonify(form.errors), 400
+
 
 #delete food
 @food_routes.route('/<int:id>/delete', methods=['DELETE'])
 @login_required
 def delete_food(id):
-    pass
+    food = Food.query.get(id)
+    if food is None:
+        return jsonify({'error': 'Food not found'}), 404
+    if current_user.id != food.user_id:
+        return jsonify({'error': 'You cannot delete another user\'s food'}), 401
+    db.session.delete(food)
+    db.session.commit()
+    return {'message': 'Food deleted successfully'}, 200
 
 #create food review by food id
 @food_routes.route('/<int:id>/reviews/new', methods=['POST'])

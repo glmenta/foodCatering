@@ -9,3 +9,10 @@ class FoodForm(FlaskForm):
     price = StringField('price', validators=[DataRequired()])
     food_img = StringField('food_img')
     submit = SubmitField('Submit')
+
+
+class EditFoodForm(FlaskForm):
+    name = StringField('name', validators=[DataRequired()])
+    description = StringField('description', validators=[DataRequired()])
+    price = StringField('price', validators=[DataRequired()])
+    submit = SubmitField('Submit')
