@@ -14,11 +14,13 @@ class Food(db.Model):
         __table_args__ = {'schema': SCHEMA}
 
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     name = db.Column(db.String(255), nullable=False)
     price = db.Column(db.Float, nullable=False)
     description = db.Column(db.String(255), nullable=False)
     isActive = db.Column(db.Boolean, nullable=False, default=True)
 
+    user = db.relationship('User', back_populates='foods')
     food_orders = db.relationship('FoodOrder', back_populates='food', cascade="all, delete")
     food_images = db.relationship('FoodImage', back_populates='food', cascade="all, delete")
     food_menus = db.relationship('FoodMenu', secondary='food_menu_foods', back_populates='foods')

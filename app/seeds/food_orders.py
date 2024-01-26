@@ -4,6 +4,7 @@ from sqlalchemy.sql import text
 def seed_foods():
     Kutsinta = Food(
         id = 1,
+        user_id = 3,
         name="Kutsinta",
         price=9.00,
         description="Comes in a pack of 7 pieces. It is made from a mixture of tapioca or rice flour, brown sugar and lye, enhanced with yellow food coloring or annatto extract.",
@@ -11,12 +12,14 @@ def seed_foods():
     )
     Pork_Tocino = Food(
         id = 2,
+        user_id = 3,
         name="Pork Tocino",
         price=13.00,
         description="Comes in a pack of 7 pieces. Kapampangan style. The Original Tocino."
     )
     Chicken_Embutido = Food(
         id = 3,
+        user_id = 3,
         name="Chicken Embutido",
         price=11.00,
         description="Comes in a pack of 3. Sausage made with chicken; Similar to meatloaf!"
