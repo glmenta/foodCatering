@@ -23,9 +23,12 @@ def user(id):
     Query for a user by id and returns that user in a dictionary
     """
     user = User.query.get(id)
+    if user is None:
+        return jsonify({'error': 'User not found'}), 404
     return user.to_dict()
 
-@user_routes.route('/<int:id>/orders')
+#get all orders by user Id
+@user_routes.route('/<int:id>/orders', methods=['GET'])
 @login_required
 def user_orders(id):
     user = User.query.get(id)
@@ -34,6 +37,17 @@ def user_orders(id):
     user_orders = Order.query.filter(Order.user_id == id).all()
 
     return {'orders': [order.to_dict() for order in user_orders]}
+
+@user_routes.route('/<int:id>/orders/<int:order_id>', methods=['GET'])
+@login_required
+def user_order(id, order_id):
+    user = User.query.get(id)
+    if user is None:
+        return jsonify({'error': 'User not found'}), 404
+    user_order = Order.query.filter(Order.user_id == id, Order.id == order_id).first()
+    if user_order is None:
+        return jsonify({'error': 'Order not found'}), 404
+    return user_order.to_dict()
 
 @user_routes.route('/<int:id>/reviews', methods=['GET'])
 @login_required
