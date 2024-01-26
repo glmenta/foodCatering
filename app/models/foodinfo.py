@@ -25,8 +25,8 @@ class Food(db.Model):
     reviews = db.relationship('Review', back_populates='food', cascade="all, delete")
     star_ratings = db.relationship('starRating', back_populates='food', cascade="all, delete")
 
-    created_at = db.Column(db.DateTime, nullable=False)
-    updated_at = db.Column(db.DateTime, nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
     def to_dict(self):
         return {

@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify
 from flask_login import login_required
 from app.models import User
+from app.models.order import Order
 
 user_routes = Blueprint('users', __name__)
 
@@ -23,3 +24,22 @@ def user(id):
     """
     user = User.query.get(id)
     return user.to_dict()
+
+@user_routes.route('/<int:id>/orders')
+@login_required
+def user_orders(id):
+    user = User.query.get(id)
+    if user is None:
+        return jsonify({'error': 'User not found'}), 404
+    user_orders = Order.query.filter(Order.user_id == id).all()
+
+    return {'orders': [order.to_dict() for order in user_orders]}
+
+@user_routes.route('/<int:id>/reviews', methods=['GET'])
+@login_required
+def user_reviews(id):
+    user = User.query.get(id)
+    if user is None:
+        return jsonify({'error': 'User not found'}), 404
+    user_reviews = user.reviews
+    return {'reviews': [review.to_dict() for review in user_reviews]}

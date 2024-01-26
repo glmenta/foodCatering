@@ -1,5 +1,5 @@
 from .db import db , environment, SCHEMA, add_prefix_for_prod
-
+from datetime import datetime
 class Day(db.Model):
     __tablename__ = 'days'
 
@@ -8,8 +8,8 @@ class Day(db.Model):
 
     food_menu = db.relationship('FoodMenu', back_populates='day', cascade="all, delete")
 
-    created_at = db.Column(db.DateTime, nullable=False)
-    updated_at = db.Column(db.DateTime, nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
     def to_dict(self):
         return {
