@@ -17,3 +17,6 @@ class MenuForm(FlaskForm):
     def add_food_to_day(self):
         self.day.choices = [(day.id, day.day) for day in Day.query.all()]
         self.food.choices = [(food.id, food.name) for food in Food.query.all()]
+
+class AddFoodToMenuForm(FlaskForm):
+    pass
