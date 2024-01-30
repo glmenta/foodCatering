@@ -1,13 +1,14 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
+from wtforms import StringField, SubmitField, SelectField
 from wtforms.validators import DataRequired
 from app.models.foodinfo import Food, FoodMenu, FoodOrder
 from app.models.day import Day
+from flask import current_app
 
 class MenuForm(FlaskForm):
-    # add food to menu depending on the day
-    day = StringField('day', validators=[DataRequired()])
-    food = StringField('food', validators=[DataRequired()])
+    # Add food to the menu depending on the day
+    day = SelectField('day', validators=[DataRequired()])
+    food = SelectField('food', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
     def __init__(self, *args, **kwargs):
@@ -15,8 +16,11 @@ class MenuForm(FlaskForm):
         self.add_food_to_day()
 
     def add_food_to_day(self):
-        self.day.choices = [(day.id, day.day) for day in Day.query.all()]
-        self.food.choices = [(food.id, food.name) for food in Food.query.all()]
+        days = Day.query.all()
+        foods = Food.query.all()
+
+        self.day.choices = [(str(day.id), day.day) for day in days]
+        self.food.choices = [(str(food.id), food.name) for food in foods]
 
 class AddFoodToMenuForm(FlaskForm):
     pass

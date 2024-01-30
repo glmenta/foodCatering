@@ -187,3 +187,16 @@ def get_food_images(id):
     if food_images is None:
         return jsonify({'error': 'No images found'}), 404
     return {'images': [image.to_dict() for image in food_images]}
+
+
+#add food image by food id
+@food_routes.route('/<int:id>/images/new', methods=['POST'])
+@login_required
+def create_food_image(id):
+    pass
+
+#delete food image by food id
+@food_routes.route('/<int:id>/images/<int:image_id>/delete', methods=['DELETE'])
+@login_required
+def delete_food_image(id, image_id):
+    pass
