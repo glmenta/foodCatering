@@ -49,7 +49,6 @@ def add_food_to_menu(id):
     form['csrf_token'].data = request.cookies['csrf_token']
 
     if form.validate():
-        # Assuming form.day.data and form.food.data are the selected IDs
         day_id = int(form.day.data)
         food_id = int(form.food.data)
 
@@ -57,18 +56,15 @@ def add_food_to_menu(id):
         selected_food = Food.query.get(food_id)
 
         if selected_day and selected_food:
-            # Check if the menu for the selected day already exists
             existing_menu = FoodMenu.query.filter_by(day=selected_day).first()
 
             if existing_menu:
-                # Append the new food to the existing menu
                 if selected_food in existing_menu.foods:
                     return jsonify({'error': 'Food already exists in the menu'}), 400
                 existing_menu.foods.append(selected_food)
                 db.session.commit()
                 return jsonify({'message': 'Menu updated successfully', 'menu': existing_menu.to_dict()}), 200
             else:
-                # If the menu doesn't exist, create a new one
                 curr_menu.day = selected_day
                 curr_menu.foods.append(selected_food)
                 db.session.commit()
@@ -80,9 +76,9 @@ def add_food_to_menu(id):
         return jsonify({'error': 'Invalid form data. Check your input and try again.'}), 400
 
 #remove food from menu by day id
-@menu_routes.route('/<int:menu_id>/delete/<int:food_id>', methods=['DELETE'])
+@menu_routes.route('/<int:id>/delete/<int:food_id>', methods=['DELETE'])
 @login_required
-def remove_food_from_menu(menu_id, food_id):
+def remove_food_from_menu(id, food_id):
     user_id = current_user.id
     check_admin = User.query.filter(User.isAdmin == True, User.id == user_id).first()
 
@@ -90,19 +86,18 @@ def remove_food_from_menu(menu_id, food_id):
         return jsonify({'error': 'You must be an admin to edit the menu'}), 401
 
     # Check if the menu exists
-    curr_menu = FoodMenu.query.get(menu_id)
+    day = Day.query.get(id)
+    print('day', day)
+    curr_menu = FoodMenu.query.filter(FoodMenu.day_id == id).first()
     if curr_menu is None:
         return jsonify({'error': 'Menu not found'}), 404
-
+    print('curr_menu', curr_menu)
     # Check if the selected food exists
     selected_food = Food.query.get(food_id)
     if selected_food is None:
         return jsonify({'error': 'Food not found'}), 404
-    print('curr_menu.foods', curr_menu.foods)
-    # Check if the food is in the menu before trying to remove it
-    association_record = db.session.query(food_menu_foods).filter_by(food_menu_id=menu_id, food_id=food_id).first()
-    if association_record:
-        db.session.delete(association_record)
+    if selected_food in curr_menu.foods:
+        curr_menu.foods.remove(selected_food)
         db.session.commit()
         return jsonify({'message': 'Food removed from menu successfully', 'menu': curr_menu.to_dict()}), 200
     else:
