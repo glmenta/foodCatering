@@ -69,13 +69,26 @@ def add_food_to_order(id):
     form['csrf_token'].data = request.cookies['csrf_token']
 
     if form.validate_on_submit():
-        selected_food = [form.food.data]
+        selected_food_id = form.food.data
 
-        existing_food = Food.query.filter(Food.name.in_(selected_food)).first()
+        # Assuming Food has an 'id' attribute
+        existing_food = Food.query.get(selected_food_id)
 
-        print('existing_food', existing_food)
+        if existing_food is None:
+            return jsonify({'error': 'Food not found'}), 404
 
-        quantity = int(form.quantity.data)
+        quantity = form.quantity.data
+        food_order = FoodOrder(food=existing_food, quantity=quantity)
+        order.food_orders.append(food_order)
+
+        # Update order total or quantity if needed
+        order.update_order()
+
+        # Save changes to the database
+        db.session.commit()
+
+        # Return success response with updated order details
+        return jsonify({'success': 'Food added to order successfully', 'order': order.serialize()})
 
     else:
         return jsonify(errors=form.errors), 400

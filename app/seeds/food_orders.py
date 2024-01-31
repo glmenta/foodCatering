@@ -38,7 +38,6 @@ def undo_foods():
     db.session.commit()
 
 def seed_food_orders():
-
     one_kutsinta = FoodOrder(
         id = 1,
         order_id=1,
