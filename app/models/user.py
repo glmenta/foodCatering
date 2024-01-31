@@ -42,5 +42,6 @@ class User(db.Model, UserMixin):
             'lastName': self.last_name,
             'isAdmin': self.isAdmin,
             'orders': [order.to_dict() for order in self.orders],
-            'foods': [food.to_dict() for food in self.foods]
+            'foods': [food.to_dict() for food in self.foods],
+            'reviews': [review.to_dict() for review in self.reviews]
         }

@@ -52,6 +52,7 @@ class FoodMenu(db.Model):
 
     foods = db.relationship('Food', secondary='food_menu_foods', back_populates='food_menus')
     day = db.relationship('Day', back_populates='food_menu')
+    food_orders = db.relationship('FoodOrder', back_populates='food_menu')
 
     def to_dict(self):
         return {
@@ -69,12 +70,14 @@ class FoodOrder(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     order_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('orders.id')), nullable=False)
     food_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('foods.id')), nullable=False)
+    menu_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('food_menus.id')), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
     food = db.relationship('Food', back_populates='food_orders')
     orders = db.relationship('Order', back_populates='food_orders')
+    food_menu = db.relationship('FoodMenu', back_populates='food_orders')
 
     def to_dict(self):
         return {

@@ -59,6 +59,7 @@ def upgrade():
     op.create_table('food_orders',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('order_id', sa.Integer(), nullable=False),
+    sa.Column('menu_id', sa.Integer(), nullable=False),
     sa.Column('food_id', sa.Integer(), nullable=False),
     sa.Column('quantity', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=True),
