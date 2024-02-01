@@ -54,17 +54,21 @@ def upgrade():
     sa.Column('isActive', sa.Boolean(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('food_orders',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('order_id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('order_id', sa.Integer(), nullable=True),
     sa.Column('menu_id', sa.Integer(), nullable=True),
     sa.Column('food_id', sa.Integer(), nullable=False),
     sa.Column('quantity', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['order_id'], ['orders.id'], ),
+    sa.ForeignKeyConstraint(['food_id'], ['foods.id'], ),
+    sa.ForeignKeyConstraint(['menu_id'], ['food_menus.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('food_images',

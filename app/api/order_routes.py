@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from app.models.order import Order
 from app.models.user import User
-from app.models.foodinfo import FoodOrder, Food
+from app.models.foodinfo import FoodOrder, Food, FoodMenu
 from flask_login import login_required, current_user
 from ..forms.order_form import OrderForm, FoodOrderForm
 order_routes = Blueprint('orders', __name__)
@@ -63,15 +63,22 @@ def add_food_to_order(id):
         return jsonify({'error': 'Order not found'}), 404
     if order.user_id != current_user.id:
         return jsonify({'error': 'You cannot add food to another user\'s order'}), 401
-
+    # from this point so far, I have the order => need to find food_orders thru order_id
+    user_orders = FoodOrder.query.filter(FoodOrder.order_id == order.id).all()
+    # # from food_order, menu_id => food menu => has the available food
+    # food_menu = FoodMenu.query.filter(FoodMenu.id == user_order.food_menu_id).first()
+    # # add food from food_menu to food_order => add food_order to order
+    # available_food = Food.query.filter(Food.id == food_menu.food_id).all()
+    for user_order in user_orders:
+        food_menu = FoodMenu.query.filter(FoodMenu.id == user_order.food_menu_id).first()
+        available_food = Food.query.filter(Food.id == food_menu.food_id).all()
     order_data = request.get_json()
-    form = FoodOrderForm(data=order_data)
+    food_menu_id = food_menu.ID
+    form = FoodOrderForm(food_menu_id=food_menu_id)
     form['csrf_token'].data = request.cookies['csrf_token']
-
-    if form.validate_on_submit():
+    if form.validate():
         selected_food_id = form.food.data
-
-        # Assuming Food has an 'id' attribute
+        print('Selected food ID:', selected_food_id)
         existing_food = Food.query.get(selected_food_id)
 
         if existing_food is None:
@@ -81,18 +88,31 @@ def add_food_to_order(id):
         food_order = FoodOrder(food=existing_food, quantity=quantity)
         order.food_orders.append(food_order)
 
-        # Update order total or quantity if needed
-        order.update_order()
-
-        # Save changes to the database
         db.session.commit()
 
-        # Return success response with updated order details
-        return jsonify({'success': 'Food added to order successfully', 'order': order.serialize()})
+        return jsonify({'success': 'Food added to order successfully', 'order': order.to_dict()})
 
-    else:
-        return jsonify(errors=form.errors), 400
+
+
+
 
 #add food to order if userId matches order userId
 #delete food from order if userId matches order userId
 #delete order if userId matches order userId
+    # form = FoodOrderForm(food_menu_id=id)
+    # form['csrf_token'].data = request.cookies['csrf_token']
+    # if form.validate():
+    #     selected_food_id = form.food.data
+    #     print('Selected food ID:', selected_food_id)
+    #     existing_food = Food.query.get(selected_food_id)
+
+    #     if existing_food is None:
+    #         return jsonify({'error': 'Food not found'}), 404
+
+    #     quantity = form.quantity.data
+    #     food_order = FoodOrder(food=existing_food, quantity=quantity)
+    #     order.food_orders.append(food_order)
+
+    #     db.session.commit()
+
+    #     return jsonify({'success': 'Food added to order successfully', 'order': order.to_dict()})

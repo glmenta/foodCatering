@@ -1,8 +1,10 @@
-from flask import Blueprint, jsonify
-from flask_login import login_required
+from flask import Blueprint, jsonify, request
+from flask_login import login_required, current_user
 from app.models import User
 from app.models.order import Order
-
+from app.models.foodinfo import Food, FoodOrder
+from app.forms.order_form import FoodOrderForm
+from ..models.db import db
 user_routes = Blueprint('users', __name__)
 
 
@@ -48,6 +50,58 @@ def user_order(id, order_id):
     if user_order is None:
         return jsonify({'error': 'Order not found'}), 404
     return user_order.to_dict()
+
+@user_routes.route('/<int:id>/foodorders', methods=['GET'])
+@login_required
+def user_foodorders(id):
+    user = User.query.get(id)
+    if user is None:
+        return jsonify({'error': 'User not found'}), 404
+    user_foodorders = FoodOrder.query.filter(FoodOrder.user_id == id).all()
+    return {'foodorders': [foodorder.to_dict() for foodorder in user_foodorders]}
+
+@user_routes.route('/<int:id>/foodorders/new', methods=['POST'])
+@login_required
+def create_food_order(id):
+    user = User.query.get(id)
+
+    # Check if the user exists
+    if user is None:
+        return jsonify({'error': 'User not found'}), 404
+
+    # Check if the current user is the owner of the requested user's data
+    if user.id != current_user.id:
+        return jsonify({'error': 'You cannot add food to another user\'s order'}), 401
+
+    # Get the JSON data from the request
+    foodorder_data = request.get_json()
+
+    # Create the form instance with the provided data
+    form = FoodOrderForm(food_menu_id=foodorder_data.get('menu_id'), foodorder_data=foodorder_data)
+    form['csrf_token'].data = request.cookies['csrf_token']
+
+    print('Request Data:', request.get_json())
+    print('Available Choices:', form.food.choices)
+    # Validate the form
+    if form.validate():
+        # Retrieve the selected food and quantity from the form
+        selected_food_id = form.food.data
+        quantity = form.quantity.data
+
+        # Create a new FoodOrder instance
+        new_food_order = FoodOrder(
+            food_id=selected_food_id,
+            user_id=user.id,
+            menu_id=foodorder_data.get('menu_id'),
+            order_id=None,  # Since there's no order_id yet
+            quantity=quantity
+        )
+
+        db.session.add(new_food_order)
+        db.session.commit()
+        return jsonify({'message': 'Food order created successfully', 'food_order': new_food_order.to_dict()}), 201
+    else:
+        return jsonify({'error': 'Form validation failed', 'errors': form.errors}), 400
 
 @user_routes.route('/<int:id>/reviews', methods=['GET'])
 @login_required

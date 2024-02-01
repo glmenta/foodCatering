@@ -3,7 +3,7 @@ from wtforms import StringField, SubmitField, SelectField, IntegerField
 from wtforms.validators import DataRequired, ValidationError
 from app.models.order import Order
 from app.models.day import Day
-from app.models.foodinfo import FoodOrder, Food, FoodMenu
+from app.models.foodinfo import FoodOrder, Food, FoodMenu, food_menu_foods
 
 # order form needs: order name, choice of food in order and quantity, submit
 class FoodOrderForm(FlaskForm):
@@ -11,14 +11,21 @@ class FoodOrderForm(FlaskForm):
     quantity = IntegerField('Quantity', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, food_menu_id, *args, **kwargs):
         super(FoodOrderForm, self).__init__(*args, **kwargs)
-        self.add_food_to_order()
+        self.add_food_to_order(food_menu_id)
 
-    def add_food_to_order(self):
-        # Assuming Food has an 'id' and 'name' attribute
-        self.food.choices = [(food.id, food.name) for food in Food.query.all()]
-        print('These are the choices:', self.food.choices)
+    def add_food_to_order(self, food_menu_id):
+        print('Food menu ID:', food_menu_id)
+        food_menu_instance = FoodMenu.query.get(food_menu_id)
+        if food_menu_instance is None:
+            print(f"Food menu with ID {food_menu_id} not found")
+        print('Food menu instance:', food_menu_instance)
+        associated_foods = getattr(food_menu_instance, 'foods', [])
+        print('Associated foods:', associated_foods)
+        self.food.choices = [(food.id, food.name) for food in associated_foods]
+
+
 
 class OrderForm(FlaskForm):
     order_name = StringField('order_name', validators=[DataRequired()])

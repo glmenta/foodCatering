@@ -40,30 +40,35 @@ def undo_foods():
 def seed_food_orders():
     one_kutsinta = FoodOrder(
         id = 1,
+        user_id=1,
         order_id=1,
         food_id=1,
         quantity=1
     )
     two_kutsinta = FoodOrder(
         id = 2,
+        user_id=1,
         order_id=2,
         food_id=1,
         quantity=2
     )
     three_kutsinta = FoodOrder(
         id = 3,
+        user_id=1,
         order_id=2,
         food_id=1,
         quantity=3
     )
     one_pork_tocino = FoodOrder(
         id = 4,
+        user_id=2,
         order_id=3,
         food_id=2,
         quantity=1
     )
     one_chicken_embutido = FoodOrder(
         id = 5,
+        user_id=2,
         order_id=3,
         food_id=3,
         quantity=1
