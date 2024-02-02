@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, IntegerField
-from wtforms.validators import DataRequired, ValidationError
+from wtforms.validators import DataRequired, ValidationError, NumberRange
 from app.models.order import Order
 from app.models.day import Day
 from app.models.foodinfo import FoodOrder, Food, FoodMenu, food_menu_foods
@@ -25,6 +25,15 @@ class FoodOrderForm(FlaskForm):
         print('Associated foods:', associated_foods)
         self.food.choices = [(food.id, food.name) for food in associated_foods]
 
+class AddFoodOrderToOrder(FlaskForm):
+    # Use SelectField for the dropdown of available foods
+    available_foods = SelectField('Available Foods', coerce=int, validators=[DataRequired()])
+
+    # IntegerField for the quantity of the selected food
+    quantity = IntegerField('Quantity', validators=[DataRequired(), NumberRange(min=1)])
+
+    # SubmitField for submitting the form
+    submit = SubmitField('Add to Order')
 
 
 class OrderForm(FlaskForm):

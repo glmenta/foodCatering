@@ -1,10 +1,11 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, current_app
 from app.models.foodinfo import FoodMenu, Food, food_menu_foods
 from app.models.user import User
 from flask_login import login_required, current_user
 from app.models.day import Day
 from ..models.db import db
 from ..forms.menu_form import MenuForm
+from datetime import datetime
 
 menu_routes = Blueprint('menus', __name__)
 
@@ -12,6 +13,7 @@ menu_routes = Blueprint('menus', __name__)
 def get_all_menus():
     menus = FoodMenu.query.all()
     return {'menus': [menu.to_dict() for menu in menus]}
+
 #get menu by day id
 @menu_routes.route('/<int:id>')
 def get_menu_by_day_id(id):
@@ -102,3 +104,49 @@ def remove_food_from_menu(id, food_id):
         return jsonify({'message': 'Food removed from menu successfully', 'menu': curr_menu.to_dict()}), 200
     else:
         return jsonify({'error': 'Food not found in menu'}), 404
+
+
+
+
+@menu_routes.route('/set_current_menu/<int:id>', methods=['POST'])
+@login_required
+def set_current_menu(id):
+    day = Day.query.get(id)
+
+    if day is None:
+        return jsonify({'error': 'Day not found'}), 404
+
+    # Get the corresponding FoodMenu record using the day_id
+    current_menu = FoodMenu.query.filter_by(day_id=id).first()
+
+    if current_menu:
+        # Update the current_menu_id with the corresponding day_id
+        current_app.config['CURRENT_MENU_ID'] = current_menu.id
+    else:
+        # If no record exists, create a new one
+        current_menu = FoodMenu(day_id=id, current_menu_id=id)
+        current_app.config['CURRENT_MENU_ID'] = current_menu.id
+
+    db.session.commit()
+
+    # Fetch the updated menu using current_menu.current_menu_id
+    updated_menu = FoodMenu.query.get(current_menu.current_menu_id)
+
+    return jsonify({'message': 'Current menu updated successfully', 'updated_menu': updated_menu.to_dict()}), 200
+
+
+@menu_routes.route('/current', methods=['GET'])
+def get_current_menu():
+    current_menu_id = current_app.config.get('CURRENT_MENU_ID')
+
+    if current_menu_id is None:
+        return jsonify({'error': 'Current menu not set'}), 404
+
+    current_menu_record = FoodMenu.query.get(current_menu_id)
+
+    if current_menu_record is None:
+        return jsonify({'error': 'Current menu not found'}), 404
+
+    current_menu = current_menu_record.to_dict()
+
+    return jsonify({'current_menu': current_menu}), 200

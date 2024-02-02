@@ -11,10 +11,13 @@ from .api.food_routes import food_routes
 from .api.order_routes import order_routes
 from .api.review_routes import review_routes
 from .api.menu_routes import menu_routes
+from .api.food_orders_routes import food_order_routes
 from .seeds import seed_commands
 from .config import Config
 
 app = Flask(__name__, static_folder='../react-app/build', static_url_path='/')
+
+app.config['CURRENT_MENU_ID'] = None
 
 # Setup login manager
 login = LoginManager(app)
@@ -36,6 +39,7 @@ app.register_blueprint(food_routes, url_prefix='/api/foods')
 app.register_blueprint(order_routes, url_prefix='/api/orders')
 app.register_blueprint(review_routes, url_prefix='/api/reviews')
 app.register_blueprint(menu_routes, url_prefix='/api/menus')
+app.register_blueprint(food_order_routes, url_prefix='/api/food_orders')
 db.init_app(app)
 Migrate(app, db)
 

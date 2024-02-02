@@ -114,6 +114,7 @@ def upgrade():
     op.create_table('food_menus',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('day_id', sa.Integer(), nullable=False),
+    sa.Column('current_menu_id', sa.Integer(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['day_id'], ['days.id'], ),

@@ -58,7 +58,7 @@ def user_foodorders(id):
     if user is None:
         return jsonify({'error': 'User not found'}), 404
     user_foodorders = FoodOrder.query.filter(FoodOrder.user_id == id).all()
-    return {'foodorders': [foodorder.to_dict() for foodorder in user_foodorders]}
+    return {'food_orders': [foodorder.to_dict() for foodorder in user_foodorders]}
 
 @user_routes.route('/<int:id>/foodorders/new', methods=['POST'])
 @login_required
@@ -102,6 +102,20 @@ def create_food_order(id):
         return jsonify({'message': 'Food order created successfully', 'food_order': new_food_order.to_dict()}), 201
     else:
         return jsonify({'error': 'Form validation failed', 'errors': form.errors}), 400
+
+@user_routes.route('/<int:user_id>/foodorders/<int:id>', methods=['DELETE'])
+@login_required
+def delete_food_order(user_id, id):
+    food_order = FoodOrder.query.get(id)
+    user = User.query.get(user_id)
+    if food_order is None:
+        return jsonify({'error': 'Food order not found'}), 404
+    if food_order.user_id != current_user.id or user.id != current_user.id:
+        return jsonify({'error': 'You cannot delete another user\'s food order'}), 401
+    db.session.delete(food_order)
+    db.session.commit()
+
+    return {'message': 'Food order deleted successfully'}, 200
 
 @user_routes.route('/<int:id>/reviews', methods=['GET'])
 @login_required

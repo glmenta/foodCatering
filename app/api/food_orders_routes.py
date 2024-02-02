@@ -1,0 +1,10 @@
+from flask import Blueprint, jsonify, request
+from app.models.foodinfo import FoodOrder
+from ..models.db import db
+
+food_order_routes = Blueprint('food_orders', __name__)
+
+@food_order_routes.route('/')
+def get_food_orders():
+    food_orders = FoodOrder.query.all()
+    return {'food_orders': [foodorder.to_dict() for foodorder in food_orders]}

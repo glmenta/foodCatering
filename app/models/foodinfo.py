@@ -47,6 +47,7 @@ class FoodMenu(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     day_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('days.id')), nullable=False)
+    current_menu_id = db.Column(db.Integer, db.ForeignKey('food_menus.id'), nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
@@ -58,6 +59,7 @@ class FoodMenu(db.Model):
         return {
             'id': self.id,
             'day_id': self.day_id,
+            'current_menu_id': self.current_menu_id,
             'day': self.day.to_dict() if self.day else None,
             'foods': [food.to_dict() for food in self.foods],
             'created_at': self.created_at,
@@ -84,6 +86,7 @@ class FoodOrder(db.Model):
         return {
             'id': self.id,
             'user_id': self.user_id,
+            'menu_id': self.menu_id,
             'order_id': self.order_id,
             'food_id': self.food_id,
             'quantity': self.quantity,
