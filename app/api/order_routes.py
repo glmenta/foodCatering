@@ -103,7 +103,7 @@ def add_food_to_order(id):
 
     return jsonify({'success': 'Food added to order successfully', 'order': order.to_dict()}), 200
 
-@order_routes.route('/<int:order_id>/delete/<int:food_order_id>', methods=['DELETE'])
+@order_routes.route('/<int:order_id>/delete/<int:food_order_id>', methods=['PATCH'])
 @login_required
 def remove_food_order_from_order(order_id, food_order_id):
     user_id = current_user.id
@@ -117,13 +117,16 @@ def remove_food_order_from_order(order_id, food_order_id):
     if food_order is None or food_order.order_id != order_id:
         return jsonify({'error': 'Food order not found in the specified order'}), 404
 
-    # Remove the food_order from the order
-    order.food_orders.remove(food_order)
+    data = request.get_json()
+    quantity_from_data = data.get('quantity', 1)
 
+    if quantity_from_data <= 0 or not isinstance(quantity_from_data, int):
+        return jsonify({'error': 'Invalid quantity value'}), 400
+
+    if quantity_from_data >= food_order.quantity:
+        order.food_orders.remove(food_order)
+    else:
+        food_order.quantity -= quantity_from_data
     db.session.commit()
 
     return jsonify({'message': 'Food order removed from order successfully', 'order': order.to_dict()}), 200
-
-#add food to order if userId matches order userId
-#delete food from order if userId matches order userId
-#delete order if userId matches order userId
