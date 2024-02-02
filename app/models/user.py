@@ -19,7 +19,6 @@ class User(db.Model, UserMixin):
     # relationships
     orders = db.relationship('Order', back_populates='users', cascade='all, delete-orphan')
     reviews = db.relationship('Review', back_populates='user', cascade='all, delete-orphan')
-    star_ratings = db.relationship('starRating', back_populates='user', cascade='all, delete-orphan')
     foods = db.relationship('Food', back_populates='user', cascade='all, delete-orphan')
 
     @property

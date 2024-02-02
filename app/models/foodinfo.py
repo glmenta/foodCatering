@@ -25,7 +25,6 @@ class Food(db.Model):
     food_images = db.relationship('FoodImage', back_populates='food', cascade="all, delete")
     food_menus = db.relationship('FoodMenu', secondary='food_menu_foods', back_populates='foods')
     reviews = db.relationship('Review', back_populates='food', cascade="all, delete")
-    star_ratings = db.relationship('starRating', back_populates='food', cascade="all, delete")
 
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
@@ -38,6 +37,7 @@ class Food(db.Model):
             'description': self.description,
             'isActive': self.isActive,
             'food_images': [foodImage.to_dict() for foodImage in self.food_images],
+            'reviews': [review.to_dict() for review in self.reviews],
             'created_at': self.created_at,
             'updated_at': self.updated_at
         }

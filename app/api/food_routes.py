@@ -1,11 +1,13 @@
 from flask import Blueprint, jsonify, request
 from app.models.foodinfo import Food, FoodImage
-from app.models.review import starRating, Review
+from app.models.review import Review
 from app.models.user import User
 from ..models.db import db
 from flask_login import login_required, current_user
 from ..forms.food_form import FoodForm, EditFoodForm
+from ..forms.review_form import ReviewForm
 from urllib.parse import urlsplit
+from datetime import datetime
 import os
 
 food_routes = Blueprint('foods', __name__)
@@ -43,8 +45,18 @@ def get_food_stars(id):
     food = Food.query.get(id)
     if food is None:
         return jsonify({'error': 'Food not found'}), 404
-    stars = starRating.query.filter(starRating.food_id == id).all()
-    return {'stars': [star.to_dict() for star in stars]}
+
+    food_reviews = food.reviews
+    if not food_reviews:
+        return jsonify({'error': 'No reviews found'}), 404
+
+    reviews = [review.to_dict() for review in food_reviews]
+
+    # Calculate average rating
+    total_ratings = sum(review['rating'] for review in reviews)
+    average_rating = total_ratings / len(reviews) if len(reviews) > 0 else 0.0
+
+    return {'reviews': reviews, 'average_rating': average_rating}
 
 #get average star rating by food id
 @food_routes.route('/<int:id>/ratings/average')
@@ -53,14 +65,18 @@ def get_food_stars_avg(id):
     food = Food.query.get(id)
     if food is None:
         return jsonify({'error': 'Food not found'}), 404
-    stars = starRating.query.filter(starRating.food_id == id).all()
-    if len(stars) == 0:
-        return jsonify({'error': 'No reviews found'}), 404
-    total = 0
-    for star in stars:
-        total += star.rating
-    return {'average': total / len(stars)}
 
+    food_reviews = food.reviews
+    if not food_reviews:
+        return jsonify({'error': 'No reviews found'}), 404
+
+    reviews = [review.to_dict() for review in food_reviews]
+
+    # Calculate average rating
+    total_ratings = sum(review['rating'] for review in reviews)
+    average_rating = total_ratings / len(reviews) if len(reviews) > 0 else 0.0
+
+    return {'food': food.name, 'average_rating': average_rating}
 #create food
 @food_routes.route('/new', methods=['POST'])
 @login_required
@@ -154,27 +170,6 @@ def delete_food(id):
     db.session.commit()
     return {'message': 'Food deleted successfully'}, 200
 
-#create food review by food id
-@food_routes.route('/<int:id>/reviews/new', methods=['POST'])
-@login_required
-def create_food_review(id):
-    data = request.get_json()
-    food = Food.query.get(id)
-    if food is None:
-        return jsonify({'error': 'Food not found'}), 404
-    if current_user.id == food.user_id:
-        return jsonify({'error': 'You cannot review your own food'}), 400
-    review = Review(
-        user_id=current_user.id,
-        food_id=id,
-        review=data.get('review')
-    )
-    db.session.add(review)
-    db.session.commit()
-    return {
-            'message': 'Food review created successfully',
-            'review': review.to_dict()
-        }, 201
 
 #get food images by food id
 @food_routes.route('/<int:id>/images')
@@ -200,3 +195,62 @@ def create_food_image(id):
 @login_required
 def delete_food_image(id, image_id):
     pass
+
+
+@food_routes.route('/<int:id>/reviews/new', methods=['POST'])
+@login_required
+def create_review(id):
+    food = Food.query.get(id)
+    if food is None:
+        return jsonify({'error': 'Food not found'}), 404
+
+    data = request.get_json()
+
+    if not data:
+        return jsonify({'error': 'Invalid data format. JSON expected.'}), 400
+
+    review_text = data.get('review')
+    rating = data.get('rating')
+
+    if not review_text or not rating:
+        return jsonify({'error': 'Review and rating are required'}), 400
+
+    try:
+        rating = int(rating)
+        if not (0 <= rating <= 5):
+            return jsonify({'error': 'Rating must be between 0 and 5'}), 400
+    except ValueError:
+        return jsonify({'error': 'Invalid rating format. Must be an integer'}), 400
+
+    new_review = Review(
+        user_id=current_user.id,
+        food_id=food.id,
+        review=review_text,
+        rating=rating,
+        created_at=datetime.now(),
+        updated_at=datetime.now()
+    )
+
+    db.session.add(new_review)
+    db.session.commit()
+
+    return jsonify({'message': 'Review created successfully', 'review': new_review.to_dict()}), 201
+
+@food_routes.route('/<int:food_id>/reviews/<int:review_id>/delete', methods=['DELETE'])
+@login_required
+def delete_review(food_id, review_id):
+    food = Food.query.get(food_id)
+    review = Review.query.get(review_id)
+
+    if review is None:
+        return jsonify({'error': 'Review not found'}), 404
+
+    if review.user_id != current_user.id:
+        return jsonify({'error': 'Unauthorized to delete this review'}), 403
+    if review.food_id != food_id:
+        return jsonify({'error': 'Review does not belong to the specified food'}), 403
+
+    db.session.delete(review)
+    db.session.commit()
+
+    return jsonify({'message': 'Review deleted successfully', 'deleted_review': review.to_dict(), 'food_reviews': food.to_dict()}), 200

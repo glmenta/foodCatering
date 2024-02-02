@@ -85,25 +85,26 @@ def upgrade():
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('food_id', sa.Integer(), nullable=False),
     sa.Column('review', sa.String(length=255), nullable=False),
+    sa.Column('rating', sa.Float(), default=0.0),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['food_id'], ['foods.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('star_ratings',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('food_id', sa.Integer(), nullable=False),
-    sa.Column('review_id', sa.Integer(), nullable=False),
-    sa.Column('rating', sa.Integer(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('updated_at', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['food_id'], ['foods.id'], ),
-    sa.ForeignKeyConstraint(['review_id'], ['reviews.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
+    # op.create_table('star_ratings',
+    # sa.Column('id', sa.Integer(), nullable=False),
+    # sa.Column('user_id', sa.Integer(), nullable=False),
+    # sa.Column('food_id', sa.Integer(), nullable=False),
+    # sa.Column('review_id', sa.Integer(), nullable=False),
+    # sa.Column('rating', sa.Integer(), nullable=False),
+    # sa.Column('created_at', sa.DateTime(), nullable=True),
+    # sa.Column('updated_at', sa.DateTime(), nullable=True),
+    # sa.ForeignKeyConstraint(['food_id'], ['foods.id'], ),
+    # sa.ForeignKeyConstraint(['review_id'], ['reviews.id'], ),
+    # sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    # sa.PrimaryKeyConstraint('id')
+    # )
     op.create_table('days',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('day', sa.String(length=255), nullable=False),
@@ -132,7 +133,7 @@ def upgrade():
         op.execute(f"ALTER TABLE foods SET SCHEMA {SCHEMA};")
         op.execute(f"ALTER TABLE food_images SET SCHEMA {SCHEMA};")
         op.execute(f"ALTER TABLE reviews SET SCHEMA {SCHEMA};")
-        op.execute(f"ALTER TABLE star_ratings SET SCHEMA {SCHEMA};")
+        # op.execute(f"ALTER TABLE star_ratings SET SCHEMA {SCHEMA};")
         op.execute(f"ALTER TABLE days SET SCHEMA {SCHEMA};")
         op.execute(f"ALTER TABLE food_menus SET SCHEMA {SCHEMA};")
         op.execute(f"ALTER TABLE food_menu_foods SET SCHEMA {SCHEMA};")
@@ -147,7 +148,7 @@ def downgrade():
     op.drop_table('foods')
     op.drop_table('food_images')
     op.drop_table('reviews')
-    op.drop_table('star_ratings')
+    # op.drop_table('star_ratings')
     op.drop_table('days')
     op.drop_table('food_menus')
     op.drop_table('food_menu_foods')
