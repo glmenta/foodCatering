@@ -4,7 +4,7 @@ from app.models.review import Review
 from app.models.user import User
 from ..models.db import db
 from flask_login import login_required, current_user
-from ..forms.food_form import FoodForm, EditFoodForm
+from ..forms.food_form import FoodForm, EditFoodForm, AddFoodImageForm
 from ..forms.review_form import ReviewForm
 from urllib.parse import urlsplit
 from datetime import datetime
@@ -188,14 +188,47 @@ def get_food_images(id):
 @food_routes.route('/<int:id>/images/new', methods=['POST'])
 @login_required
 def create_food_image(id):
-    pass
+    food = Food.query.get(id)
+    if food is None:
+        return jsonify({'error': 'Food not found'}), 404
+
+    if current_user.id != food.user_id:
+        return jsonify({'error': 'You cannot add images to another user\'s food'}), 401
+
+    data = request.get_json()
+
+    if not data:
+        return jsonify({'error': 'Invalid data format. JSON expected.'}), 400
+
+    img_url = data.get('url')
+    new_food_image = FoodImage(
+        food_id=food.id,
+        url=img_url
+    )
+    db.session.add(new_food_image)
+    db.session.commit()
+    return jsonify({'message': 'Food image created successfully', 'image': new_food_image.to_dict()}), 201
 
 #delete food image by food id
-@food_routes.route('/<int:id>/images/<int:image_id>/delete', methods=['DELETE'])
+@food_routes.route('/<int:food_id>/images/<int:image_id>/delete', methods=['DELETE'])
 @login_required
-def delete_food_image(id, image_id):
-    pass
+def delete_food_image(food_id, image_id):
+    food = Food.query.get(food_id)
+    image = FoodImage.query.get(image_id)
+    user_id = current_user.id
+    if food is None:
+        return jsonify({'error': 'Food not found'}), 404
+    if user_id != food.user_id:
+        return jsonify({'error': 'You cannot delete images from another user\'s food'}), 401
+    if image is None:
+        return jsonify({'error': 'Image not found'}), 404
+    if image.food_id != food_id:
+        return jsonify({'error': 'Image does not belong to the specified food'}), 403
 
+    db.session.delete(image)
+    db.session.commit()
+
+    return jsonify({'message': 'Image deleted successfully', 'deleted_image': image.to_dict(), 'food_images': food.to_dict()}), 200
 
 @food_routes.route('/<int:id>/reviews/new', methods=['POST'])
 @login_required

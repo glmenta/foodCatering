@@ -16,3 +16,8 @@ class EditFoodForm(FlaskForm):
     description = StringField('description', validators=[DataRequired()])
     price = StringField('price', validators=[DataRequired()])
     submit = SubmitField('Submit')
+
+
+class AddFoodImageForm(FlaskForm):
+    url = StringField('food_img', validators=[DataRequired()])
+    submit = SubmitField('Submit')
