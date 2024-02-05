@@ -112,7 +112,9 @@ def remove_food_from_menu(id, food_id):
 @login_required
 def set_current_menu(id):
     day = Day.query.get(id)
-
+    user = current_user
+    if user.isAdmin == False:
+        return jsonify({'error': 'You must be an admin to edit the menu'}), 401
     if day is None:
         return jsonify({'error': 'Day not found'}), 404
 
@@ -129,10 +131,14 @@ def set_current_menu(id):
 
     db.session.commit()
 
-    # Fetch the updated menu using current_menu.current_menu_id
-    updated_menu = FoodMenu.query.get(current_menu.current_menu_id)
+    # Fetch the updated menu using current_menu.current_menu_id after committing
+    updated_menu = FoodMenu.query.get(current_menu.id)
 
-    return jsonify({'message': 'Current menu updated successfully', 'updated_menu': updated_menu.to_dict()}), 200
+    if updated_menu:
+        return jsonify({'message': 'Current menu updated successfully', 'updated_menu': updated_menu.to_dict()}), 200
+    else:
+        return jsonify({'error': 'Failed to fetch updated menu'}), 500
+
 
 
 @menu_routes.route('/current', methods=['GET'])
