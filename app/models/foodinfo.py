@@ -52,7 +52,7 @@ class FoodMenu(db.Model):
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
     foods = db.relationship('Food', secondary='food_menu_foods', back_populates='food_menus')
-    day = db.relationship('Day', back_populates='food_menu')
+    day = db.relationship('Day', back_populates='food_menus', foreign_keys=[day_id])
     food_orders = db.relationship('FoodOrder', back_populates='food_menu')
 
     def to_dict(self):
