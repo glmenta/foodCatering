@@ -36,6 +36,13 @@ def upgrade():
     sa.UniqueConstraint('email'),
     sa.UniqueConstraint('username')
     )
+    op.create_table('days',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('day', sa.String(length=255), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('orders',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
@@ -55,6 +62,15 @@ def upgrade():
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('food_menus',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('day_id', sa.Integer(), nullable=False),
+    sa.Column('current_menu_id', sa.Integer(), nullable=True),
+    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
+    sa.ForeignKeyConstraint(['day_id'], ['days.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('food_orders',
@@ -92,22 +108,6 @@ def upgrade():
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('days',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('day', sa.String(length=255), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('updated_at', sa.DateTime(), nullable=True),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('food_menus',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('day_id', sa.Integer(), nullable=False),
-    sa.Column('current_menu_id', sa.Integer(), nullable=True),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('updated_at', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['day_id'], ['days.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
     op.create_table(
         'food_menu_foods',
         sa.Column('food_id', sa.Integer(), sa.ForeignKey('foods.id')),
@@ -115,15 +115,15 @@ def upgrade():
     )
     if environment == "production":
         op.execute(f"ALTER TABLE users SET SCHEMA {SCHEMA};")
+        op.execute(f"ALTER TABLE days SET SCHEMA {SCHEMA};")
+        op.execute(f"ALTER TABLE food_menus SET SCHEMA {SCHEMA};")
         op.execute(f"ALTER TABLE orders SET SCHEMA {SCHEMA};")
         op.execute(f"ALTER TABLE food_orders SET SCHEMA {SCHEMA};")
         op.execute(f"ALTER TABLE foods SET SCHEMA {SCHEMA};")
         op.execute(f"ALTER TABLE food_images SET SCHEMA {SCHEMA};")
         op.execute(f"ALTER TABLE reviews SET SCHEMA {SCHEMA};")
-        op.execute(f"ALTER TABLE days SET SCHEMA {SCHEMA};")
-        op.execute(f"ALTER TABLE food_menus SET SCHEMA {SCHEMA};")
         op.execute(f"ALTER TABLE food_menu_foods SET SCHEMA {SCHEMA};")
-    # ### end Alembic commands ###qqqqqqqqq
+    # ### end Alembic commands ###
 
 
 def downgrade():
