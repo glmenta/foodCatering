@@ -51,9 +51,9 @@ class FoodMenu(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
-    foods = db.relationship('Food', secondary='food_menu_foods', back_populates='food_menus')
     day = db.relationship('Day', back_populates='food_menus', foreign_keys=[day_id])
-    #
+
+    foods = db.relationship('Food', secondary='food_menu_foods', back_populates='food_menus')
     food_orders = db.relationship('FoodOrder', back_populates='food_menu')
 
     def to_dict(self):
@@ -66,6 +66,7 @@ class FoodMenu(db.Model):
             'created_at': self.created_at,
             'updated_at': self.updated_at
         }
+
 
 class FoodOrder(db.Model):
     __tablename__ = 'food_orders'
