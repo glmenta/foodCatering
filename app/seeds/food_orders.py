@@ -1,4 +1,4 @@
-from app.models.foodinfo import Food, FoodOrder, FoodMenu, db, environment, SCHEMA
+from app.models.foodinfo import Food, FoodOrder, FoodMenu, db, environment, SCHEMA, food_menu_foods
 from sqlalchemy.sql import text
 
 def seed_foods():
@@ -90,7 +90,7 @@ def undo_food_orders():
 
 def seed_food_menus():
     monday_food_ids = [1]
-    tuesday_food_ids = []
+    tuesday_food_ids = [2]
     wednesday_food_ids = [1, 2]
     thursday_food_ids = []
     friday_food_ids = [2, 3]
@@ -128,8 +128,6 @@ def seed_food_menus():
     db.session.add(friday_menu)
     db.session.add(saturday_menu)
     db.session.add(sunday_menu)
-
-    # Commit the changes
     db.session.commit()
 
 def undo_food_menus():

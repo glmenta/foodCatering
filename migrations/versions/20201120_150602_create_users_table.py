@@ -124,7 +124,6 @@ def upgrade():
         op.execute(f"ALTER TABLE food_orders SET SCHEMA {SCHEMA};")
         op.execute(f"ALTER TABLE food_images SET SCHEMA {SCHEMA};")
         op.execute(f"ALTER TABLE reviews SET SCHEMA {SCHEMA};")
-
         op.execute(f"ALTER TABLE food_menu_foods SET SCHEMA {SCHEMA};")
     # ### end Alembic commands ###
 
