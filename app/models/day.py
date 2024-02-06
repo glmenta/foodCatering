@@ -5,7 +5,7 @@ class Day(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     day = db.Column(db.String(255), nullable=False)
-    # food_menu_id = db.Column(db.Integer, db.ForeignKey('food_menus.id'), nullable=True)
+    food_menu_id = db.Column(db.Integer, db.ForeignKey('food_menus.id'), nullable=True)
 
     food_menus = db.relationship('FoodMenu', back_populates='day', cascade="all, delete", foreign_keys='FoodMenu.day_id')
 
@@ -15,7 +15,7 @@ class Day(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
-            # 'food_menu_id': self.food_menu_id,
+            'food_menu_id': self.food_menu_id,
             'day': self.day,
             'created_at': self.created_at,
             'updated_at': self.updated_at

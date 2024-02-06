@@ -39,10 +39,10 @@ def upgrade():
     op.create_table('days',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('day', sa.String(length=255), nullable=False),
-    # sa.Column('food_menu_id', sa.Integer(), nullable=True),
+    sa.Column('food_menu_id', sa.Integer(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
-    # sa.ForeignKeyConstraint(['food_menu_id'], ['food_menus.id'], ),
+    sa.ForeignKeyConstraint(['food_menu_id'], ['food_menus.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('orders',
@@ -68,7 +68,7 @@ def upgrade():
     )
     op.create_table('food_menus',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('day_id', sa.Integer(), nullable=False),
+    sa.Column('day_id', sa.Integer(), nullable=True),
     sa.Column('current_menu_id', sa.Integer(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
