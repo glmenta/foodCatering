@@ -24,23 +24,15 @@ def seed():
         db.session.execute(f'TRUNCATE table {SCHEMA}.food_images RESTART IDENTITY CASCADE;')
         db.session.execute(f'TRUNCATE table {SCHEMA}.foods RESTART IDENTITY CASCADE;')
         db.session.execute(f'TRUNCATE table {SCHEMA}.orders RESTART IDENTITY CASCADE;')
-        # Undo functions in reverse order
-        undo_food_orders()
-        undo_food_menus()
-        undo_reviews()
-        undo_days()
-        undo_food_images()
-        undo_foods()
-        undo_orders()
         undo_users()
     seed_users()
     seed_days()
+    seed_food_menus()
     seed_orders()
-    seed_foods()
     seed_food_orders()
+    seed_foods()
     seed_food_images()
     seed_reviews()
-    seed_food_menus()
     # Add other seed functions here
 
 
@@ -48,11 +40,12 @@ def seed():
 @seed_commands.command('undo')
 def undo():
     undo_users()
-    undo_orders()
-    undo_foods()
-    undo_food_orders()
-    undo_food_images()
-    undo_food_menus()
-    undo_reviews()
     undo_days()
+    undo_food_menus()
+    undo_orders()
+    undo_food_orders()
+    undo_foods()
+    undo_food_images()
+    undo_reviews()
+
     # Add other undo functions here
