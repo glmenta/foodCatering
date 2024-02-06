@@ -16,34 +16,17 @@ seed_commands = AppGroup('seed')
 @seed_commands.command('all')
 def seed():
     if environment == 'production':
-        # Before seeding in production, you want to run the seed undo
-        # command, which will  truncate all tables prefixed with
-        # the schema name (see comment in users.py undo_users function).
-        # Make sure to add all your other model's undo functions below
-        # db.session.execute(f'TRUNCATE table {SCHEMA}.users RESTART IDENTITY CASCADE;')
-        # db.session.execute(f'TRUNCATE table {SCHEMA}.orders RESTART IDENTITY CASCADE;')
-        # db.session.execute(f'TRUNCATE table {SCHEMA}.food_orders RESTART IDENTITY CASCADE;')
-        # db.session.execute(f'TRUNCATE table {SCHEMA}.foods RESTART IDENTITY CASCADE;')
-        # db.session.execute(f'TRUNCATE table {SCHEMA}.food_images RESTART IDENTITY CASCADE;')
-        # db.session.execute(f'TRUNCATE table {SCHEMA}.days RESTART IDENTITY CASCADE;')
-        # db.session.execute(f'TRUNCATE table {SCHEMA}.reviews RESTART IDENTITY CASCADE;')
-        # db.session.execute(f'TRUNCATE table {SCHEMA}.star_ratings RESTART IDENTITY CASCADE;')
-        # db.session.execute(f'TRUNCATE table {SCHEMA}.food_menus RESTART IDENTITY CASCADE;')
-        # undo_users()
+        db.session.execute(f'TRUNCATE table {SCHEMA}.users RESTART IDENTITY CASCADE;')
+        db.session.execute(f'TRUNCATE table {SCHEMA}.days RESTART IDENTITY CASCADE;')
         db.session.execute(f'TRUNCATE table {SCHEMA}.food_orders RESTART IDENTITY CASCADE;')
         db.session.execute(f'TRUNCATE table {SCHEMA}.food_menus RESTART IDENTITY CASCADE;')
-        # db.session.execute(f'TRUNCATE table {SCHEMA}.star_ratings RESTART IDENTITY CASCADE;')
         db.session.execute(f'TRUNCATE table {SCHEMA}.reviews RESTART IDENTITY CASCADE;')
-        db.session.execute(f'TRUNCATE table {SCHEMA}.days RESTART IDENTITY CASCADE;')
         db.session.execute(f'TRUNCATE table {SCHEMA}.food_images RESTART IDENTITY CASCADE;')
         db.session.execute(f'TRUNCATE table {SCHEMA}.foods RESTART IDENTITY CASCADE;')
         db.session.execute(f'TRUNCATE table {SCHEMA}.orders RESTART IDENTITY CASCADE;')
-        db.session.execute(f'TRUNCATE table {SCHEMA}.users RESTART IDENTITY CASCADE;')
-
         # Undo functions in reverse order
         undo_food_orders()
         undo_food_menus()
-        # undo_star_ratings()
         undo_reviews()
         undo_days()
         undo_food_images()
@@ -51,13 +34,12 @@ def seed():
         undo_orders()
         undo_users()
     seed_users()
+    seed_days()
     seed_orders()
     seed_foods()
     seed_food_orders()
     seed_food_images()
-    seed_days()
     seed_reviews()
-    # seed_star_ratings()
     seed_food_menus()
     # Add other seed functions here
 
@@ -72,6 +54,5 @@ def undo():
     undo_food_images()
     undo_food_menus()
     undo_reviews()
-    # undo_star_ratings()
     undo_days()
     # Add other undo functions here
