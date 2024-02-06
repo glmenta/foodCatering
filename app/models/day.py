@@ -5,7 +5,6 @@ class Day(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     day = db.Column(db.String(255), nullable=False)
-    food_menu_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('food_menus.id')), nullable=True)
 
     food_menu = db.relationship('FoodMenu', back_populates='day', cascade="all, delete")
 
