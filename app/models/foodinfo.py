@@ -24,6 +24,7 @@ class Food(db.Model):
     food_orders = db.relationship('FoodOrder', back_populates='food', cascade="all, delete")
     food_images = db.relationship('FoodImage', back_populates='food', cascade="all, delete")
     food_menus = db.relationship('FoodMenu', secondary='food_menu_foods', back_populates='foods')
+    # food_menu_foods = db.relationship('food_menu_foods')
     reviews = db.relationship('Review', back_populates='food', cascade="all, delete")
 
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
