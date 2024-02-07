@@ -51,7 +51,7 @@ class FoodMenu(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     day_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('days.id')), nullable=True)
-    current_menu_id = db.Column(db.Integer, db.ForeignKey('food_menus.id'), nullable=True)
+    current_menu_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('food_menus.id')), nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
