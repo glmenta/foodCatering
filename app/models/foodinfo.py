@@ -3,8 +3,8 @@ from datetime import datetime
 
 food_menu_foods = db.Table(
     'food_menu_foods',
-    db.Column('food_id', db.Integer, db.ForeignKey('foods.id')),
-    db.Column('food_menu_id', db.Integer, db.ForeignKey('food_menus.id'))
+    db.Column('food_id', db.Integer, db.ForeignKey(add_prefix_for_prod('foods.id'))),
+    db.Column('food_menu_id', db.Integer, db.ForeignKey(add_prefix_for_prod('food_menus.id')))
     )
 
 class Food(db.Model):
@@ -46,13 +46,16 @@ class Food(db.Model):
 class FoodMenu(db.Model):
     __tablename__ = 'food_menus'
 
+    if environment == "production":
+        __table_args__ = {'schema': SCHEMA}
+
     id = db.Column(db.Integer, primary_key=True)
     day_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('days.id')), nullable=True)
     current_menu_id = db.Column(db.Integer, db.ForeignKey('food_menus.id'), nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
-    day = db.relationship('Day', back_populates=add_prefix_for_prod('food_menus'))
+    day = db.relationship('Day', back_populates='food_menus')
     # , foreign_keys=[day_id]
     foods = db.relationship('Food', secondary='food_menu_foods', back_populates='food_menus')
     food_orders = db.relationship('FoodOrder', back_populates='food_menu')
@@ -71,6 +74,9 @@ class FoodMenu(db.Model):
 
 class FoodOrder(db.Model):
     __tablename__ = 'food_orders'
+
+    if environment == "production":
+        __table_args__ = {'schema': SCHEMA}
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('users.id')), nullable=False)
