@@ -23,7 +23,6 @@ def seed():
         db.session.execute(f'TRUNCATE table {SCHEMA}.food_menus RESTART IDENTITY CASCADE;')
         db.session.execute(f'TRUNCATE table {SCHEMA}.reviews RESTART IDENTITY CASCADE;')
         db.session.execute(f'TRUNCATE table {SCHEMA}.food_images RESTART IDENTITY CASCADE;')
-
         db.session.execute(f'TRUNCATE table {SCHEMA}.orders RESTART IDENTITY CASCADE;')
         undo_users()
     seed_users()
