@@ -1,12 +1,6 @@
 from .db import db, environment, SCHEMA, add_prefix_for_prod
 from datetime import datetime
 
-food_menu_foods = db.Table(
-    'food_menu_foods',
-    db.Column('food_id', db.Integer, db.ForeignKey(add_prefix_for_prod('foods.id'))),
-    db.Column('food_menu_id', db.Integer, db.ForeignKey(add_prefix_for_prod('food_menus.id')))
-    )
-
 class Food(db.Model):
     __tablename__ = 'foods'
 
@@ -70,6 +64,12 @@ class FoodMenu(db.Model):
             'updated_at': self.updated_at
         }
 
+
+food_menu_foods = db.Table(
+    'food_menu_foods',
+    db.Column('food_id', db.Integer, db.ForeignKey(add_prefix_for_prod('foods.id'))),
+    db.Column('food_menu_id', db.Integer, db.ForeignKey(add_prefix_for_prod('food_menus.id')))
+    )
 
 class FoodOrder(db.Model):
     __tablename__ = 'food_orders'
