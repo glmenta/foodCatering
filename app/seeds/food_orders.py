@@ -121,6 +121,14 @@ def seed_food_menus():
     saturday_menu.foods.extend(saturday_foods)
     sunday_menu.foods.extend(sunday_foods)
 
+    print("Monday Menu Foods:", monday_foods)
+    print("Tuesday Menu Foods:", tuesday_foods)
+    print("Wednesday Menu Foods:", wednesday_foods)
+    print("Thursday Menu Foods:", thursday_foods)
+    print("Friday Menu Foods:", friday_foods)
+    print("Saturday Menu Foods:", saturday_foods)
+    print("Sunday Menu Foods:", sunday_foods)
+
     db.session.add(monday_menu)
     db.session.add(tuesday_menu)
     db.session.add(wednesday_menu)

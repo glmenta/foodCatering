@@ -71,6 +71,7 @@ food_menu_foods = db.Table(
     db.Column('food_menu_id', db.Integer, db.ForeignKey(add_prefix_for_prod('food_menus.id')))
     )
 
+
 class FoodOrder(db.Model):
     __tablename__ = 'food_orders'
 
@@ -123,3 +124,17 @@ class FoodImage(db.Model):
             'url': self.url,
             'food_id': self.food_id
         }
+
+
+
+# class FoodMenuFoods(db.Model):
+#     __tablename__ = 'food_menu_foods'
+
+#     if environment == "production":
+#         __table_args__ = {'schema': SCHEMA}
+
+#     id = db.Column(db.Integer, primary_key=True)
+#     food_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('foods.id')), nullable=False)
+#     food_menu_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('food_menus.id')), nullable=False)
+#     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
+#     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
