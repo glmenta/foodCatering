@@ -13,7 +13,6 @@ import os
 food_routes = Blueprint('foods', __name__)
 
 @food_routes.route('/')
-@login_required
 def get_all_foods():
     foods = Food.query.all()
     return {'foods': [food.to_dict() for food in foods]}
