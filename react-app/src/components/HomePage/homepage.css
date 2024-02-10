@@ -1,0 +1,33 @@
+.food-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    list-style-type: none;
+}
+
+.food-item {
+    display: flex;
+    justify-content: center;
+    border: solid 2px black;
+    border-radius: 10px;
+    box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2);
+    margin: 20px;
+    transition: transform 0.3s ease;
+}
+
+.food-item:hover {
+    transform: scale(1.1);
+}
+
+.food-name {
+    text-align: center;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.food-item img{
+    width: 300px;
+    max-height: 300px;
+    border: solid 2px red;
+    margin: 10px;
+}

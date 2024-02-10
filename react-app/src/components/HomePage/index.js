@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import * as foodActions from "../../store/food";
-
+import './homepage.css'
 
 function HomePage() {
     const history = useHistory();
     const dispatch = useDispatch();
     const user = useSelector(state => state.session.user)
-    const foods = useSelector(state => state.food.allFoods)
+    const foods = useSelector(state => Object.values(state.food.allFoods))
     const [isLoaded, setIsLoaded] = useState(false)
 
     useEffect(() => {
@@ -23,7 +23,12 @@ function HomePage() {
             <div className='food-list'>
                 { isLoaded && foods.length > 0 && (
                     foods.map(food => (
-                        <li>{food.name}</li>
+                        <div className = 'food-item'>
+                            <div className='food-item-contents'>
+                                <li className='food-name'>{food.name}</li>
+                                <img src={food?.food_images[0]?.url} alt={food.name} className='food-img'/>
+                            </div>
+                        </div>
                     ))
                 )
                 }
