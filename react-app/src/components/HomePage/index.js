@@ -31,21 +31,16 @@ function HomePage() {
     if (!currentMenu) {
         <h1>Loading...</h1>
     }
+
+    const navigateToFoodPage = () => {
+        history.push('/foods')
+    }
+
     return (
         <div>
             <h1>Home Page</h1>
-            <div className='food-list'>
-                { isLoaded && foods.length > 0 && (
-                    foods.map(food => (
-                        <div className = 'food-item'>
-                            <div className='food-item-contents'>
-                                <li className='food-name'>{food.name}</li>
-                                <img src={food?.food_images[0]?.url} alt={food.name} className='food-img'/>
-                            </div>
-                        </div>
-                    ))
-                )
-                }
+            <div className='food-button'>
+                <button onClick={navigateToFoodPage}>View All Foods</button>
             </div>
             <div className='current-menu-container'>
                 {currentMenu ? (
@@ -53,13 +48,13 @@ function HomePage() {
                         <h2>Current Menu</h2>
                         <div className='current-menu-contents'>
                             <ul>
-                                {currentMenu.current_menu?.foods.map(food => (
+                                {currentMenu?.current_menu?.foods.map(food => (
                                     <li key={food.id}>
                                         <div className='menu-food'>
-                                            <h3 className='menu-food-name'>{food.name}</h3>
-                                            <p className='menu-food-description'>Description: {food.description}</p>
+                                            <h3 className='menu-food-name'>{food?.name}</h3>
+                                            <p className='menu-food-description'>Description: {food?.description}</p>
                                             <p className='menu-food-price'>Price: ${food.price}</p>
-                                            <img src={food?.food_images[0]?.url} alt={food.name} className='food-img'/>
+                                            <img src={food?.food_images[0]?.url} alt={food?.name} className='food-img'/>
                                         </div>
                                     </li>
                                 ))}
