@@ -30,3 +30,4 @@ class Order(db.Model):
 
     users = db.relationship('User', back_populates='orders')
     food_orders = db.relationship('FoodOrder', back_populates='orders', cascade="all, delete-orphan")
+    messages = db.relationship('Message', back_populates='order', cascade="all, delete-orphan")
