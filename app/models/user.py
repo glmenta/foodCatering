@@ -16,6 +16,9 @@ class User(db.Model, UserMixin):
     isAdmin = db.Column(db.Boolean, nullable=False, default=False)
     hashed_password = db.Column(db.String(255), nullable=False)
 
+    sent_messages = db.relationship('Message', back_populates='sender', cascade='all, delete-orphan', lazy=True, foreign_keys='Message.sender_id')
+    received_messages = db.relationship('Message', back_populates='receiver', cascade='all, delete-orphan', lazy=True, foreign_keys='Message.receiver_id')
+
     # relationships
     orders = db.relationship('Order', back_populates='users', cascade='all, delete-orphan')
     reviews = db.relationship('Review', back_populates='user', cascade='all, delete-orphan')
@@ -42,5 +45,7 @@ class User(db.Model, UserMixin):
             'isAdmin': self.isAdmin,
             'orders': [order.to_dict() for order in self.orders],
             'foods': [food.to_dict() for food in self.foods],
-            'reviews': [review.to_dict() for review in self.reviews]
+            'reviews': [review.to_dict() for review in self.reviews],
+            'sentMessages': [message.to_dict() for message in self.sent_messages],
+            'receivedMessages': [message.to_dict() for message in self.received_messages]
         }
