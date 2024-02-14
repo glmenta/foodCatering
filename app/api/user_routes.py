@@ -4,6 +4,7 @@ from app.models import User
 from app.models.order import Order
 from app.models.foodinfo import Food, FoodOrder
 from app.forms.order_form import FoodOrderForm
+from app.models.message import Message
 from ..models.db import db
 user_routes = Blueprint('users', __name__)
 
