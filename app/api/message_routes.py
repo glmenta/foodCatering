@@ -62,29 +62,39 @@ def send_message_to_customer(order_id):
         return jsonify({'errors': form.errors}), 400
 
 # send message to admin
-@message_routes.route('/send-to-admin/<int:order_id>', methods=['GET', 'POST'])
+@message_routes.route('/send-to-kitchen/<int:order_id>', methods=['GET', 'POST'])
 @login_required
-def send_message_to_admin(order_id):
+def send_message_to_kitchen(order_id):
     form = MessageForm()
+
     order = Order.query.get(order_id)
+
+    admins = User.query.filter_by(isAdmin=True).all()
+
     if not order:
         return jsonify({'error': 'Order not found'}), 404
 
-    if not order.user_id != current_user.id:
+    print(order.user_id, current_user.id)
+
+    if order.user_id != current_user.id:
         return jsonify({'error': 'This order does not belong to you'}), 403
 
     form['csrf_token'].data = request.cookies['csrf_token']
     if form.validate_on_submit():
-        message = Message(
-            sender_id=current_user.id,
-            receiver_id=1,
-            order_id=order_id,
-            content=form.message.data
-        )
-        db.session.add(message)
+        sent_messages = []
+        for admin in admins:
+            message = Message(
+                sender_id=current_user.id,
+                receiver_id=admin.id,
+                order_id=order_id,
+                content=form.message.data
+            )
+            db.session.add(message)
+            sent_messages.append(message.to_dict())
+
         try:
             db.session.commit()
-            return jsonify({'message': 'Message sent to admin!', 'sent_message': message.to_dict()}), 200
+            return jsonify({'message': 'Message sent to all admins!', 'sent_messages': sent_messages}), 200
         except Exception as e:
             db.session.rollback()
             return jsonify({'error': 'Failed to send message. Error: {}'.format(str(e))}), 500
