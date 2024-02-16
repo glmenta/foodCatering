@@ -16,9 +16,9 @@ class Message(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
-    order = db.relationship('Order', back_populates='messages', single_parent=True, cascade="all, delete-orphan")
-    sender = db.relationship('User', back_populates='sent_messages', single_parent=True, foreign_keys=[sender_id], cascade="all, delete-orphan")
-    receiver = db.relationship('User', back_populates='received_messages', single_parent=True, foreign_keys=[receiver_id], cascade="all, delete-orphan")
+    order = db.relationship('Order', back_populates='messages', single_parent=True)
+    sender = db.relationship('User', back_populates='sent_messages', single_parent=True, foreign_keys=[sender_id])
+    receiver = db.relationship('User', back_populates='received_messages', single_parent=True, foreign_keys=[receiver_id])
 
     def to_dict(self):
         return {
