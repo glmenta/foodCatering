@@ -126,3 +126,4 @@ def user_reviews(id):
         return jsonify({'error': 'User not found'}), 404
     user_reviews = user.reviews
     return {'reviews': [review.to_dict() for review in user_reviews]}
+

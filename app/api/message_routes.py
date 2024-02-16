@@ -5,6 +5,8 @@ from app.models.user import User
 from app.models.order import Order
 from flask_login import login_required, current_user
 from app.forms.message_form import MessageForm
+from sqlalchemy import and_
+
 message_routes = Blueprint('messages', __name__)
 
 @message_routes.route('/all', methods=['GET'])
@@ -36,7 +38,7 @@ def send_message_to_customer(order_id):
         return jsonify({'error': 'Only admins can send messages to customers'}), 401
 
     order = Order.query.get(order_id)
-
+    print('Order:', order)
     if not order:
         return jsonify({'error': 'Order not found'}), 404
 
@@ -61,40 +63,36 @@ def send_message_to_customer(order_id):
     else:
         return jsonify({'errors': form.errors}), 400
 
-# send message to admin
 @message_routes.route('/send-to-kitchen/<int:order_id>', methods=['GET', 'POST'])
 @login_required
 def send_message_to_kitchen(order_id):
     form = MessageForm()
 
-    order = Order.query.get(order_id)
+    order = Order.query.filter(and_(Order.id == order_id, Order.user_id == current_user.id)).first()
 
     admins = User.query.filter_by(isAdmin=True).all()
-
+    print('admins', admins)
     if not order:
         return jsonify({'error': 'Order not found'}), 404
 
     print(order.user_id, current_user.id)
-
+    print('order: ', order.to_dict())
     if order.user_id != current_user.id:
         return jsonify({'error': 'This order does not belong to you'}), 403
 
     form['csrf_token'].data = request.cookies['csrf_token']
     if form.validate_on_submit():
-        sent_messages = []
-        for admin in admins:
-            message = Message(
-                sender_id=current_user.id,
-                receiver_id=admin.id,
-                order_id=order_id,
-                content=form.message.data
-            )
-            db.session.add(message)
-            sent_messages.append(message.to_dict())
-
         try:
-            db.session.commit()
-            return jsonify({'message': 'Message sent to all admins!', 'sent_messages': sent_messages}), 200
+            for admin in admins:
+                message = Message(
+                    sender_id=current_user.id,
+                    receiver_id=admin.id,
+                    order_id=order_id,
+                    content=form.message.data
+                )
+                db.session.add(message)
+                db.session.commit()
+            return jsonify({'message': 'Message sent to all admins!', 'sent_message': message.to_dict()}), 200
         except Exception as e:
             db.session.rollback()
             return jsonify({'error': 'Failed to send message. Error: {}'.format(str(e))}), 500
