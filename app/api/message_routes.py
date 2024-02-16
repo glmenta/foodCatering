@@ -98,3 +98,26 @@ def send_message_to_kitchen(order_id):
             return jsonify({'error': 'Failed to send message. Error: {}'.format(str(e))}), 500
     else:
         return jsonify({'errors': form.errors}), 400
+
+@message_routes.route('/<int:message_id>', methods=['DELETE'])
+@login_required
+def delete_message(message_id):
+    message = Message.query.get(message_id)
+    user = User.query.get(current_user.id)
+    print('message', message)
+    if message is None:
+        return jsonify({'error': 'Message not found'}), 404
+
+    if user.id != message.sender_id:
+        return jsonify({'error': 'You do not have permission to delete this message'}), 401
+
+    print('Before deletion:', message.to_dict())  # Debugging output
+    try:
+        db.session.delete(message)
+        db.session.commit()
+        print('Message deleted successfully')
+        return jsonify({'message': 'Message deleted successfully', 'deleted_message': message.to_dict()}), 200
+    except Exception as e:
+        db.session.rollback()
+        print('Failed to delete message. Error:', str(e))
+        return jsonify({'error': 'Failed to delete message. Error: {}'.format(str(e))}), 500
