@@ -50,6 +50,14 @@ export const getAllFoodsThunk = () => async (dispatch) => {
     }
 }
 
+export const getFoodThunk = (foodId) => async (dispatch) => {
+    const response = await csrfFetch(`/api/foods/${foodId}`);
+    if (response.ok) {
+        const food = await response.json();
+        dispatch(getFood(food));
+        return food
+    }
+}
 const initialState = {
     allFoods: {},
     food: {}
@@ -63,6 +71,9 @@ export default function foodReducer(state = initialState, action) {
             for (const food of action.payload.foods) {
                 newState.allFoods[food.id] = food
             }
+            return newState
+        case GET_FOOD:
+            newState.food = action.payload;
             return newState
         default:
             return state

@@ -27,7 +27,6 @@ def get_food_by_id(id):
 
 #get food reviews by food id
 @food_routes.route('/<int:id>/reviews')
-@login_required
 def get_food_reviews(id):
     food = Food.query.get(id)
     if food is None:
@@ -39,7 +38,6 @@ def get_food_reviews(id):
 
 #get star rating by food id
 @food_routes.route('/<int:id>/ratings')
-@login_required
 def get_food_stars(id):
     food = Food.query.get(id)
     if food is None:
@@ -59,7 +57,6 @@ def get_food_stars(id):
 
 #get average star rating by food id
 @food_routes.route('/<int:id>/ratings/average')
-@login_required
 def get_food_stars_avg(id):
     food = Food.query.get(id)
     if food is None:

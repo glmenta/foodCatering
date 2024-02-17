@@ -10,7 +10,7 @@ user_routes = Blueprint('users', __name__)
 
 
 @user_routes.route('/')
-@login_required
+
 def users():
     """
     Query for all users and returns them in a list of user dictionaries
@@ -126,4 +126,3 @@ def user_reviews(id):
         return jsonify({'error': 'User not found'}), 404
     user_reviews = user.reviews
     return {'reviews': [review.to_dict() for review in user_reviews]}
-
