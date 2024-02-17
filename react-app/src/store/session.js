@@ -1,6 +1,8 @@
+import {csrfFetch} from "./csrf";
 // constants
 const SET_USER = "session/SET_USER";
 const REMOVE_USER = "session/REMOVE_USER";
+const GET_ALL_USERS = "session/GET_ALL_USERS";
 
 const setUser = (user) => ({
 	type: SET_USER,
@@ -10,6 +12,11 @@ const setUser = (user) => ({
 const removeUser = () => ({
 	type: REMOVE_USER,
 });
+
+const getAllUsers = (users) => ({
+	type: GET_ALL_USERS,
+	payload: users
+})
 
 const initialState = { user: null };
 
@@ -92,7 +99,17 @@ export const signUp = (username, email, password) => async (dispatch) => {
 	} else {
 		return ["An error occurred. Please try again."];
 	}
+
 };
+
+export const getAllUsersThunk = () => async (dispatch) => {
+	const response = await csrfFetch("/api/users");
+	if (response.ok) {
+		const users = await response.json();
+		dispatch(getAllUsers(users));
+		return users
+	}
+}
 
 export default function reducer(state = initialState, action) {
 	switch (action.type) {
@@ -100,6 +117,8 @@ export default function reducer(state = initialState, action) {
 			return { user: action.payload };
 		case REMOVE_USER:
 			return { user: null };
+		case GET_ALL_USERS:
+			return { ...state, users: action.payload }
 		default:
 			return state;
 	}
