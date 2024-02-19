@@ -29,7 +29,7 @@ function HomePage() {
     console.log('MENUS', menus)
     console.log('CURRENT MENU', currentMenu)
     if (!currentMenu) {
-        <h1>Loading...</h1>
+        return <h1>Loading...</h1>
     }
 
     const navigateToFoodPage = () => {

@@ -9,6 +9,7 @@ function FoodDetailModal({ isOpen, onClose, foodId }) {
     const all_foods = useSelector(state => Object.values(state.food.allFoods))
 
     const food = all_foods.find(food => food.id === foodId)
+
     useEffect(() => {
         dispatch(reviewActions.getAllReviewsByFoodIdThunk(foodId))
     }, [dispatch, foodId])
@@ -16,6 +17,7 @@ function FoodDetailModal({ isOpen, onClose, foodId }) {
     useEffect(() => {
         dispatch(sessionActions.getAllUsersThunk())
     }, [dispatch])
+
     const users = useSelector(state => state.session.users)
     console.log('food: ', foodId, food)
     console.log('food_reviews: ', food?.reviews)
@@ -25,7 +27,8 @@ function FoodDetailModal({ isOpen, onClose, foodId }) {
         return user ? user.firstName : 'Unknown';
     };
     return (
-        <div>
+        isOpen &&
+        <div className='food-detail-modal-container'>
             <div className='food-detail-modal'>
                 <div className='food-detail-modal-header'>
                     <h1>{food?.name}</h1>
