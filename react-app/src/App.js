@@ -7,7 +7,7 @@ import { authenticate } from "./store/session";
 import Navigation from "./components/Navigation";
 import HomePage from "./components/HomePage/index.js"
 import FoodPage from "./components/FoodPage/index.js";
-
+import OrderPage from "./components/OrderPage/index.js";
 function App() {
   const dispatch = useDispatch();
   const [isLoaded, setIsLoaded] = useState(false);
@@ -29,8 +29,11 @@ function App() {
           <Route exact path="/">
             <HomePage />
           </Route>
-          <Route>
-            <FoodPage exact path="/foods"/>
+          <Route exact path="/foods">
+            <FoodPage />
+          </Route>
+          <Route exact path="/orders">
+            <OrderPage/>
           </Route>
         </Switch>
       )}

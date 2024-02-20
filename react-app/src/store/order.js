@@ -1,6 +1,7 @@
 import { csrfFetch } from "./csrf";
 
 const GET_ALL_ORDERS = "order/GET_ALL_ORDERS";
+const GET_USER_ORDERS = "order/GET_USER_ORDERS";
 const GET_ORDER = "order/GET_ORDER";
 const CREATE_ORDER = "order/CREATE_ORDER";
 const UPDATE_ORDER = "order/UPDATE_ORDER";
@@ -11,6 +12,10 @@ export const getAllOrders = (orders) => ({
     payload: orders
 })
 
+export const getUserOrders = (orders) => ({
+    type: GET_USER_ORDERS,
+    payload: orders
+})
 export const getOrder = (order) => ({
     type: GET_ORDER,
     payload: order
@@ -46,6 +51,15 @@ export const getOrderThunk = (orderId) => async (dispatch) => {
         const order = await response.json();
         dispatch(getOrder(order));
         return order
+    }
+}
+
+export const getUserOrdersThunk = (userId) => async (dispatch) => {
+    const response = await csrfFetch(`/api/users/${userId}/orders`);
+    if (response.ok) {
+        const orders = await response.json();
+        dispatch(getUserOrders(orders));
+        return orders
     }
 }
 
@@ -99,9 +113,13 @@ export default function orderReducer(state = initialState, action) {
     let newState = { ...state }
     switch (action.type) {
         case GET_ALL_ORDERS:
-            newState.allOrders = {};
             for (const order of action.payload.orders) {
                 newState.allOrders[order.id] = order
+            }
+            return newState
+        case GET_USER_ORDERS:
+            for (const order of action.payload.orders) {
+                newState.currentUserOrders[order.id] = order
             }
             return newState
         case GET_ORDER:
