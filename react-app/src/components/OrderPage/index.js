@@ -8,10 +8,43 @@ function OrderPage() {
     const history = useHistory();
     const dispatch = useDispatch();
     const user = useSelector(state => state.session.user)
-    const orders = useSelector(state => state.order.allOrders)
+    const orders = useSelector(state => Object.values(state.order.currentUserOrders))
     const [isLoaded, setIsLoaded] = useState(false)
+    console.log('user: ', user)
+
+
+
+    useEffect(() => {
+        dispatch(sessionActions.getAllUsersThunk())
+    }, [dispatch])
+
+    useEffect(() => {
+        setIsLoaded(false)
+        Promise.all([dispatch(orderActions.getUserOrdersThunk(user.id))]).then(() => setIsLoaded(true))
+    }, [dispatch])
+    // useEffect(() => {
+    //     dispatch(orderActions.getUserOrdersThunk(user.id))
+    // }, [dispatch])
+
+    console.log('orders: ', orders)
     return (
-        <div></div>
+        // isLoaded &&
+        <div className='order-page-container'>
+            <h1>Order Page</h1>
+            <div className='user-orders'>
+                {orders.map(order => (
+                    <div>
+                        <div>{order?.id}</div>
+                        <div>{order?.order_name}</div>
+                        <div>{order?.createdAt}</div>
+                        <div>
+                            <button onClick={() => history.push(`/orders/${order?.id}`)}>View Details</button>
+                        </div>
+                    </div>
+                ))}
+
+            </div>
+        </div>
     )
 }
 
