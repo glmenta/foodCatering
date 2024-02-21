@@ -3,6 +3,7 @@ import { csrfFetch } from "./csrf";
 const GET_ALL_ORDERS = "order/GET_ALL_ORDERS";
 const GET_USER_ORDERS = "order/GET_USER_ORDERS";
 const GET_ORDER = "order/GET_ORDER";
+const GET_ORDER_FOODS_BY_ID = "order/GET_ORDER_FOODS_BY_ID"
 const CREATE_ORDER = "order/CREATE_ORDER";
 const UPDATE_ORDER = "order/UPDATE_ORDER";
 const DELETE_ORDER = "order/DELETE_ORDER";
@@ -19,6 +20,11 @@ export const getUserOrders = (orders) => ({
 export const getOrder = (order) => ({
     type: GET_ORDER,
     payload: order
+})
+
+export const getOrderFoodsById = (orderFoods) => ({
+    type: GET_ORDER_FOODS_BY_ID,
+    payload: orderFoods
 })
 
 export const createOrder = (order) => ({

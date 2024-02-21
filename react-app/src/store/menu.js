@@ -1,5 +1,5 @@
 import { csrfFetch } from "./csrf";
-
+import { getAllFoods } from "./food";
 const GET_ALL_MENUS = "menu/GET_ALL_MENUS";
 const GET_MENU = "menu/GET_MENU";
 const GET_CURRENT_MENU = "menu/GET_CURRENT_MENU";
@@ -62,11 +62,27 @@ export const getMenuThunk = (menuId) => async (dispatch) => {
 }
 
 export const getCurrentMenuThunk = () => async (dispatch) => {
-    const response = await csrfFetch(`/api/menus/current`);
-    if (response.ok) {
+    try {
+        const response = await csrfFetch(`/api/menus/current`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch current menu');
+        }
         const menu = await response.json();
         dispatch(getCurrentMenu(menu));
-        return menu
+        return menu;
+    } catch (error) {
+        console.error('Error fetching current menu:', error);
+        try {
+            const defFoodsResponse = await csrfFetch(`/api/foods`);
+            if (!defFoodsResponse.ok) {
+                throw new Error('Failed to fetch default foods');
+            }
+            const defaultFoods = await defFoodsResponse.json();
+            dispatch(getAllFoods(defaultFoods));
+            return defaultFoods;
+        } catch (fallbackError) {
+            console.error('Error fetching default foods:', fallbackError);
+        }
     }
 }
 

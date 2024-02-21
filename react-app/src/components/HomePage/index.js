@@ -21,9 +21,11 @@ function HomePage() {
 
     useEffect(() => {
         dispatch(menuActions.getAllMenusThunk())
-        dispatch(menuActions.getCurrentMenuThunk())
     }, [dispatch])
 
+    useEffect(() => {
+        dispatch(menuActions.getCurrentMenuThunk())
+    }, [dispatch])
 
     console.log('FOODS', foods)
     console.log('MENUS', menus)
@@ -43,7 +45,7 @@ function HomePage() {
                 <button onClick={navigateToFoodPage}>View All Foods</button>
             </div>
             <div className='current-menu-container'>
-                {currentMenu ? (
+                {isLoaded && Object.keys(currentMenu).length > 0 ? (
                     <div className='current-menu'>
                         <h2>Current Menu</h2>
                         <div className='current-menu-contents'>
@@ -63,7 +65,7 @@ function HomePage() {
                     </div>
                 ) : (
                     <div>
-                        <h2>No menu for today!</h2>
+                        <h2>No menu for today! Please check again later.</h2>
                     </div>
                 )}
             </div>
