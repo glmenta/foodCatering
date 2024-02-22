@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom";
 import OrderDetailModal from "../OrderDetailModal";
 import * as sessionActions from "../../store/session";
 import * as orderActions from "../../store/order";
+import * as messageActions from "../../store/message";
 import './orderpage.css'
 
 function OrderPage() {
@@ -14,6 +15,7 @@ function OrderPage() {
     const [isLoaded, setIsLoaded] = useState(false)
     const [isOrderModalOpen, setIsOrderModalOpen] = useState(false)
     const [orderId, setOrderId] = useState(null)
+    const [orderMessages, setOrderMessages] = useState({})
 
     console.log('user: ', user)
 
@@ -25,9 +27,17 @@ function OrderPage() {
         setIsLoaded(false)
         Promise.all([dispatch(orderActions.getUserOrdersThunk(user.id))]).then(() => setIsLoaded(true))
     }, [dispatch])
-    // useEffect(() => {
-    //     dispatch(orderActions.getUserOrdersThunk(user.id))
-    // }, [dispatch])
+
+    useEffect(() => {
+        if (orderId) {
+            dispatch(messageActions.getOrderMessagesThunk(orderId)).then(messages => {
+                setOrderMessages(prevState => ({
+                    ...prevState,
+                    [orderId]: messages
+                }));
+            });
+        }
+    }, [dispatch, orderId])
 
     console.log('orders: ', orders)
 
@@ -50,6 +60,12 @@ function OrderPage() {
                         <div>{order?.id}</div>
                         <div>{order?.order_name}</div>
                         <div>{order?.createdAt}</div>
+                        <div className='order-messages'>
+                            {Array.isArray(orderMessages[order.id]?.messages) && orderMessages[order.id].messages.map(message => (
+                                <div key={message.id}>{message.content}</div>
+                            ))}
+                        </div>
+
                     </div>
                 ))}
             {isOrderModalOpen && <OrderDetailModal isOpen={isOrderModalOpen} onClose={closeOrderModal} orderId={orderId}/>}

@@ -9,7 +9,7 @@ import HomePage from "./components/HomePage/index.js"
 import FoodPage from "./components/FoodPage/index.js";
 import OrderPage from "./components/OrderPage/index.js";
 import CheckOrdersPage from "./components/CheckOrdersPage/index.js";
-
+import TestPage from "./components/TestPage/index.js";
 function App() {
   const dispatch = useDispatch();
   const [isLoaded, setIsLoaded] = useState(false);
@@ -39,6 +39,9 @@ function App() {
           </Route>
           <Route exact path="/check-orders">
             <CheckOrdersPage/>
+          </Route>
+          <Route exact path="/test">
+            <TestPage/>
           </Route>
         </Switch>
       )}

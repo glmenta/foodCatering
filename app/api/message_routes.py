@@ -24,7 +24,7 @@ def view_sent_messages(user_id):
     messages = Message.query.filter_by(sender_id=user_id).all()
     return {'sent_messages': [message.to_dict() for message in messages]}
 
-@message_routes.route('/<int:order_id>', methods=['GET'])
+@message_routes.route('/order/<int:order_id>', methods=['GET'])
 def view_messages_by_order_id(order_id):
     messages = Message.query.filter_by(order_id=order_id).all()
     return {'messages': [message.to_dict() for message in messages]}
