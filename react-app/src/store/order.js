@@ -43,11 +43,15 @@ export const deleteOrder = (order) => ({
 })
 
 export const getAllOrdersThunk = () => async (dispatch) => {
-    const response = await csrfFetch("/api/orders");
-    if (response.ok) {
-        const orders = await response.json();
-        dispatch(getAllOrders(orders));
-        return orders
+    const response = await csrfFetch("/api/orders/");
+    try {
+        if (response.ok) {
+            const orders = await response.json();
+            dispatch(getAllOrders(orders));
+            return orders
+        }
+    } catch (error) {
+        console.log(error);
     }
 }
 
@@ -112,17 +116,21 @@ export const deleteOrderThunk = (orderId) => async (dispatch) => {
 
 const initialState = {
     currentUserOrders: {},
-    allOrders: {}
+    allOrders: []
 }
 
 export default function orderReducer(state = initialState, action) {
     let newState = { ...state }
     switch (action.type) {
         case GET_ALL_ORDERS:
-            for (const order of action.payload.orders) {
-                newState.allOrders[order.id] = order
-            }
-            return newState
+            return {
+                ...state,
+                allOrders: action.payload
+            };
+            // for (const order of action.payload.orders) {
+            //     newState.allOrders[order.id] = order
+            // }
+            // return newState
         case GET_USER_ORDERS:
             for (const order of action.payload.orders) {
                 newState.currentUserOrders[order.id] = order
