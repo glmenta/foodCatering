@@ -15,18 +15,22 @@ function OrderDetailModal({ isOpen, onClose, orderId }) {
     }, [dispatch, orderId])
 
     console.log('Order: ', order)
+
+    const totalPrice = order ? order.foodOrders.reduce((acc, foodOrder) => acc + (foodOrder.quantity * foodOrder.food.price), 0) : 0;
+
     return (
         isOpen &&
         <div className='order-detail-modal'>
             <div className='order-detail-modal-header'>
                 <h2>{order?.order_name}</h2>
-                {order.foodOrders.map(foodOrder => (
+                {order?.foodOrders.map(foodOrder => (
                     <div className='food-order-detail'>
                         <div>Food Name: {foodOrder.food.name}</div>
                         <div>Price: ${foodOrder.food.price}</div>
                         <div>Quantity: {foodOrder.quantity}</div>
                     </div>
                 ))}
+                <div>Total Price: ${totalPrice.toFixed(2)}</div>
                 <button onClick={onClose}>X</button>
 
             </div>
