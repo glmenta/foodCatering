@@ -40,7 +40,7 @@ function OrderPage() {
     }, [dispatch, orderId])
 
     console.log('orders: ', orders)
-
+    console.log('messages: ', orderMessages)
     const openOrderModal = (id) => {
         setOrderId(id)
         setIsOrderModalOpen(true)
@@ -60,15 +60,9 @@ function OrderPage() {
                         <div>{order?.id}</div>
                         <div>{order?.order_name}</div>
                         <div>{order?.createdAt}</div>
-                        <div className='order-messages'>
-                            {Array.isArray(orderMessages[order.id]?.messages) && orderMessages[order.id].messages.map(message => (
-                                <div key={message.id}>{message.content}</div>
-                            ))}
-                        </div>
-
                     </div>
                 ))}
-            {isOrderModalOpen && <OrderDetailModal isOpen={isOrderModalOpen} onClose={closeOrderModal} orderId={orderId}/>}
+            {isOrderModalOpen && <OrderDetailModal isOpen={isOrderModalOpen} onClose={closeOrderModal} orderId={orderId} orderMessages={orderMessages[orderId]} />}
             </div>
         </div>
     )

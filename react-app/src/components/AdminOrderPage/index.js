@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 import * as sessionActions from "../../store/session";
 import * as messageActions from "../../store/message";
 
-function TestPage() {
+function AdminOrderPage() {
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -16,10 +16,12 @@ function TestPage() {
     }, [dispatch])
 
     return (
-        <div>
-            Test Page
+        <div className='test'>
+            <div>
+
+            </div>
         </div>
     )
 }
 
-export default TestPage
+export default AdminOrderPage

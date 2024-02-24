@@ -67,11 +67,15 @@ export const getUserMessagesThunk = (userId) => async (dispatch) => {
 }
 
 export const getOrderMessagesThunk = (orderId) => async (dispatch) => {
-    const response = await csrfFetch(`/api/messages/order/${orderId}`);
-    if (response.ok) {
-        const messages = await response.json();
-        dispatch(getOrderMessages(messages));
-        return messages
+    try {
+        const response = await csrfFetch(`/api/messages/order/${orderId}`);
+        if (response.ok) {
+            const messages = await response.json();
+            dispatch(getOrderMessages(messages));
+            return messages
+        }
+    } catch (error) {
+        console.log(error);
     }
 }
 
@@ -132,8 +136,11 @@ export default function messageReducer(state = initialState, action) {
         case GET_ORDER_MESSAGES:
             return {
                 ...state,
-                orderMessages: action.messages
-            }
+                orderMessages: {
+                    ...state.orderMessages,
+                    [action.orderId]: action.messages
+                }
+            };
         case GET_MESSAGE:
             return {
                 ...state,
