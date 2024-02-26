@@ -144,12 +144,10 @@ def set_current_menu(id):
         return jsonify({'error': 'You must be an admin to edit the menu'}), 401
     if day is None:
         return jsonify({'error': 'Day not found'}), 404
-    print('day : ', day, day.id)
-    # Get the corresponding FoodMenu record using the day_id
+
     current_menu = FoodMenu.query.filter_by(day_id=id).first()
 
     if current_menu:
-        # Update the current_menu_id with the corresponding day_id
         current_app.config['CURRENT_MENU_ID'] = current_menu.id
     else:
         return jsonify({'error': 'Current menu not found'}), 404
@@ -157,7 +155,6 @@ def set_current_menu(id):
         # current_app.config['CURRENT_MENU_ID'] = current_menu.id
 
     db.session.commit()
-    # Fetch the updated menu using current_menu.current_menu_id after committing
     updated_menu = FoodMenu.query.get(current_menu.id)
 
     if updated_menu:
