@@ -3,6 +3,7 @@ import { getAllFoods } from "./food";
 const GET_ALL_MENUS = "menu/GET_ALL_MENUS";
 const GET_MENU = "menu/GET_MENU";
 const GET_CURRENT_MENU = "menu/GET_CURRENT_MENU";
+const SET_CURRENT_MENU = "menu/SET_CURRENT_MENU";
 const CREATE_MENU = "menu/CREATE_MENU";
 const UPDATE_MENU = "menu/UPDATE_MENU";
 const DELETE_MENU = "menu/DELETE_MENU";
@@ -19,6 +20,11 @@ const getMenu = (menu) => ({
 
 const getCurrentMenu = (menu) => ({
     type: GET_CURRENT_MENU,
+    payload: menu
+})
+
+const setCurrentMenu = (menu) => ({
+    type: SET_CURRENT_MENU,
     payload: menu
 })
 
@@ -86,6 +92,23 @@ export const getCurrentMenuThunk = () => async (dispatch) => {
     }
 }
 
+export const setCurrentMenuThunk = (menuId) => async (dispatch) => {
+    try {
+        const response = await csrfFetch(`/api/menus/set_current_menu/${menuId}`, {
+            method: "PATCH",
+            body: JSON.stringify({ menuId }),
+        });
+        if (!response.ok) {
+            throw new Error('Failed to set current menu');
+        }
+        const menu = await response.json();
+        dispatch(setCurrentMenu(menu));
+        return menu;
+    } catch (error) {
+        console.error('Error setting current menu:', error);
+    }
+}
+
 let initialState = {
     menus: {},
     menu: {},
@@ -101,15 +124,35 @@ export default function menuReducer(state = initialState, action) {
             }
             return newState
         case GET_MENU:
-        return {
-            ...state,
-            menu: action.payload
-        };
+            return {
+                ...state,
+                menu: action.payload
+            };
         case GET_CURRENT_MENU:
-        return {
-            ...state,
-            currentMenu: action.payload
-        };
+            return {
+                ...state,
+                currentMenu: action.payload
+            };
+        case SET_CURRENT_MENU:
+            return {
+                ...state,
+                currentMenu: action.payload
+            };
+        case CREATE_MENU:
+            return {
+                ...state,
+                menu: action.payload
+            };
+        case UPDATE_MENU:
+            return {
+                ...state,
+                menu: action.payload
+            };
+        case DELETE_MENU:
+            return {
+                ...state,
+                menu: action.payload
+            };
         default:
             return state
     }

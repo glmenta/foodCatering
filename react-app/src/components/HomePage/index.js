@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import * as foodActions from "../../store/food";
 import * as menuActions from "../../store/menu";
+import SetMenuModal from "../SetMenuModal";
 import './homepage.css'
 
 function HomePage() {
@@ -13,6 +14,7 @@ function HomePage() {
     const menus = useSelector(state => Object.values(state.menu.menus))
     const currentMenu = useSelector(state => state.menu.currentMenu)
     const [isLoaded, setIsLoaded] = useState(false)
+    const [isMenuModalOpen, setIsMenuModalOpen] = useState(false)
 
     useEffect(() => {
         setIsLoaded(false)
@@ -30,12 +32,21 @@ function HomePage() {
     console.log('FOODS', foods)
     console.log('MENUS', menus)
     console.log('CURRENT MENU', currentMenu)
+    console.log('USER', user)
     if (!currentMenu) {
         return <h1>Loading...</h1>
     }
 
     const navigateToFoodPage = () => {
         history.push('/foods')
+    }
+
+    const openMenuModal = () => {
+        setIsMenuModalOpen(true)
+    }
+
+    const closeMenuModal = () => {
+        setIsMenuModalOpen(false)
     }
 
     return (
@@ -66,7 +77,14 @@ function HomePage() {
                 ) : (
                     <div>
                         <h2>No menu for today! Please check again later.</h2>
+                        {user && user.isAdmin && (
+                            <div className='set-current-menu-modal'>
+                                <button onClick={openMenuModal}>Set Current Menu</button>
+                            </div>
+                        )}
+                        {isMenuModalOpen && <SetMenuModal menus={menus} currMenuId={currentMenu.id} onClose={closeMenuModal}/>}
                     </div>
+
                 )}
             </div>
         </div>
