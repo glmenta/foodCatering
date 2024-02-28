@@ -13,6 +13,7 @@ function SetMenuModal({menus, currMenuId, onClose}) {
     const setMenu = (menuId) => {
         dispatch(menuActions.setCurrentMenuThunk(menuId))
     }
+
     console.log('menus inside setMenuModal: ', menus)
     return (
         <div className='set-menu-modal-container'>
@@ -37,7 +38,7 @@ function SetMenuModal({menus, currMenuId, onClose}) {
                                     </div>
                                 )}
                             </div>
-                            {menu?.foods.length > 0 && <button onClick={() => setMenu(menu.id)}>Set as Menu</button>}
+                            {menu?.foods.length > 0 && <button onClick={() => setMenu(menu?.id)}>Set as Menu</button>}
                         </div>
                     ))}
                 </div>
