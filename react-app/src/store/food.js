@@ -58,6 +58,23 @@ export const getFoodThunk = (foodId) => async (dispatch) => {
         return food
     }
 }
+
+export const createFoodThunk = (food) => async (dispatch) => {
+    const response = await csrfFetch(`/api/foods/new`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(food)
+    });
+    if (response.ok) {
+        const newFood = await response.json();
+        dispatch(createFood(newFood));
+        return newFood
+    } else {
+        const errors = await response.json();
+        return errors
+    }
+}
+
 const initialState = {
     allFoods: {},
     food: {}
@@ -73,6 +90,9 @@ export default function foodReducer(state = initialState, action) {
             }
             return newState
         case GET_FOOD:
+            newState.food = action.payload;
+            return newState
+        case CREATE_FOOD:
             newState.food = action.payload;
             return newState
         default:

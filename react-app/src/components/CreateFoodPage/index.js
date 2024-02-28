@@ -9,25 +9,72 @@ function CreateFoodPage() {
     const history = useHistory();
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
-    const [price, setPrice] = useState("");
+    const [price, setPrice] = useState(0);
     const [image, setImage] = useState("");
     const [errors, setErrors] = useState([]);
 
+    function isValidImageUrl(url) {
+        const pattern = new RegExp('^(https?:\\/\\/)?'+
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+
+        '((\\d{1,3}\\.){3}\\d{1,3}))'+
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+
+        '\\.(jpg|jpeg|png|bmp|gif)(\\?[;&a-z\\d%_.~+=-]*)?$','i');
+        return !!pattern.test(url);
+    }
+
+    function isOnlyWhitespace(str) {
+        return !str.trim().length;
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        let errors = {};
+        if (isOnlyWhitespace(name)) {
+            errors.name = "Name cannot be empty";
+        }
+
+        if (isOnlyWhitespace(description)) {
+            errors.description = "Description cannot be empty";
+        }
+
+        if (isOnlyWhitespace(price)) {
+            errors.price = "Price cannot be empty";
+        }
+
+        if (isOnlyWhitespace(image)) {
+            errors.image = "Image cannot be empty";
+        }
+
+        if (!isValidImageUrl(image)) {
+            errors.image = "Invalid image URL";
+        }
+
+        if (Object.keys(errors).length > 0) {
+            setErrors(errors);
+            return;
+        }
+
         const payload = {
             name,
             description,
             price,
-            image
+            food_img: image
         }
-        const data = await dispatch(foodActions.createFood(payload));
-        if (data) {
-            setErrors(data);
+        const data = await dispatch(foodActions.createFoodThunk(payload));
+        if (data.errors) {
+            setErrors(data.errors);
         } else {
-            history.push('/home')
+            // const newFoodId = data.id
+            setName("")
+            setDescription("")
+            setPrice(0)
+            setImage("")
+            setErrors([])
+            history.push('/foods')
         }
     };
+
+
     return (
         <div className="createfoodpage">
             <form onSubmit={handleSubmit}>
@@ -58,7 +105,7 @@ function CreateFoodPage() {
                 <label>
                     Price
                     <input
-                        type="text"
+                        type="number"
                         value={price}
                         onChange={(e) => setPrice(e.target.value)}
                         required
