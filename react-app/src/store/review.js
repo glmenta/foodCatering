@@ -35,6 +35,31 @@ export const getAllReviewsByFoodIdThunk = (foodId) => async (dispatch) => {
     }
 }
 
+export const getReviewThunk = (reviewId) => async (dispatch) => {
+    const response = await csrfFetch(`/api/reviews/${reviewId}`);
+    if (response.ok) {
+        const review = await response.json();
+        dispatch(getReview(review));
+        return review
+    }
+}
+
+export const createReviewThunk = (foodId, review) => async (dispatch) => {
+    const response = await csrfFetch(`/api/${foodId}/reviews/new`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(review)
+    });
+    if (response.ok) {
+        const newReview = await response.json();
+        dispatch(createReview(newReview));
+        return newReview
+    } else {
+        const errors = await response.json();
+        return errors
+    }
+}
+
 const initialState = {
     FoodReviews: {},
     review: {}
