@@ -45,7 +45,7 @@ export const getReviewThunk = (reviewId) => async (dispatch) => {
 }
 
 export const createReviewThunk = (foodId, review) => async (dispatch) => {
-    const response = await csrfFetch(`/api/${foodId}/reviews/new`, {
+    const response = await csrfFetch(`/api/foods/${foodId}/reviews/new`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(review)
