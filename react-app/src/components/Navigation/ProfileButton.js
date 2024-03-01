@@ -15,7 +15,7 @@ function ProfileButton({ user }) {
     if (showMenu) return;
     setShowMenu(true);
   };
-
+  console.log('user: ', user)
   useEffect(() => {
     if (!showMenu) return;
 
@@ -40,6 +40,13 @@ function ProfileButton({ user }) {
     history.push('/orders')
     setShowMenu(false);
   }
+
+  const handleCreateFood = (e) => {
+    e.preventDefault();
+    history.push('/create-food')
+    setShowMenu(false);
+  }
+
   const ulClassName = "profile-dropdown" + (showMenu ? "" : " hidden");
   const closeMenu = () => setShowMenu(false);
 
@@ -59,6 +66,11 @@ function ProfileButton({ user }) {
             <div>
               <button onClick={handleOrderButton}>View Orders</button>
             </div>
+            {user?.isAdmin && (
+              <div>
+                <button onClick={handleCreateFood}>Create Food</button>
+              </div>
+            )}
           </>
         ) : (
           <>
