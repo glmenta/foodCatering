@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom";
 import * as foodActions from "../../store/food";
 import * as menuActions from "../../store/menu";
 import SetMenuModal from "../SetMenuModal";
+import CreateFoodOrderModal from "../CreateFoodOrderModal";
 import './homepage.css'
 
 function HomePage() {
@@ -15,6 +16,7 @@ function HomePage() {
     const currentMenu = useSelector(state => state.menu.currentMenu)
     const [isLoaded, setIsLoaded] = useState(false)
     const [isMenuModalOpen, setIsMenuModalOpen] = useState(false)
+    const [isCreateFoodOrderModalOpen, setIsCreateFoodOrderModalOpen] = useState(false)
 
     useEffect(() => {
         setIsLoaded(false)
@@ -33,6 +35,8 @@ function HomePage() {
     console.log('MENUS', menus)
     console.log('CURRENT MENU', currentMenu)
     console.log('USER', user)
+    console.log('check if open', isCreateFoodOrderModalOpen)
+
     if (!currentMenu) {
         return <h1>Loading...</h1>
     }
@@ -47,6 +51,14 @@ function HomePage() {
 
     const closeMenuModal = () => {
         setIsMenuModalOpen(false)
+    }
+
+    const openCreateFoodOrderModal = () => {
+        setIsCreateFoodOrderModalOpen(true)
+    }
+
+    const closeCreateFoodOrderModal = () => {
+        setIsCreateFoodOrderModalOpen(false)
     }
 
     return (
@@ -67,6 +79,7 @@ function HomePage() {
                                             <h3 className='menu-food-name'>{food?.name}</h3>
                                             <p className='menu-food-description'>Description: {food?.description}</p>
                                             <p className='menu-food-price'>Price: ${food.price}</p>
+                                            <button onClick={openCreateFoodOrderModal}>Add to Order</button>
                                             <img src={food?.food_images[0]?.url} alt={food?.name} className='food-img'/>
                                         </div>
                                     </li>
@@ -86,6 +99,8 @@ function HomePage() {
                     </div>
 
                 )}
+                {isCreateFoodOrderModalOpen && <CreateFoodOrderModal isOpen={isCreateFoodOrderModalOpen} onClose={closeCreateFoodOrderModal}/>}
+
             </div>
         </div>
     )

@@ -6,6 +6,10 @@ const CREATE_FOOD = "food/CREATE_FOOD";
 const UPDATE_FOOD = "food/UPDATE_FOOD";
 const DELETE_FOOD = "food/DELETE_FOOD";
 const GET_FOOD_AVG_RATING = "food/GET_FOOD_AVG_RATING";
+const GET_FOOD_ORDERS = "food/GET_FOOD_ORDERS";
+const CREATE_FOOD_ORDER = "food/CREATE_FOOD_ORDER";
+const ADD_FOOD_TO_ORDER = "food/ADD_FOOD_TO_ORDER";
+const REMOVE_FOOD_FROM_ORDER = "food/REMOVE_FOOD_FROM_ORDER";
 
 export const getAllFoods = (foods) => {
     return {
@@ -48,6 +52,26 @@ export const deleteFood = (food) => {
     }
 }
 
+export const getFoodOrders = (foodOrders) => {
+    return {
+        type: GET_FOOD_ORDERS,
+        payload: foodOrders
+    }
+}
+
+export const createFoodOrder = (food) => {
+    return {
+        type: CREATE_FOOD_ORDER,
+        payload: food
+    }
+}
+
+export const addFoodToOrder = (food) => {
+    return {
+        type: ADD_FOOD_TO_ORDER,
+        payload: food
+    }
+}
 export const getAllFoodsThunk = () => async (dispatch) => {
     const response = await csrfFetch("/api/foods");
     if (response.ok) {
@@ -118,6 +142,54 @@ export const getFoodAvgRatingThunk = (foodId) => async (dispatch) => {
     }
 }
 
+export const getFoodOrdersThunk = (foodId) => async (dispatch) => {
+    const response = await csrfFetch(`/api/foods/${foodId}/orders`);
+    if (response.ok) {
+        const orders = await response.json();
+        dispatch(getFoodOrders(orders));
+        return orders
+    }
+}
+
+export const createFoodOrderThunk = (food) => async (dispatch) => {
+    const response = await csrfFetch(`/api/orders/food`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(food)
+    });
+    if (response.ok) {
+        const order = await response.json();
+        dispatch(createFoodOrder(order));
+        return order
+    }
+}
+
+export const addFoodToOrderThunk = (food) => async (dispatch) => {
+    const response = await csrfFetch(`/api/orders/food`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(food)
+    });
+    if (response.ok) {
+        const order = await response.json();
+        dispatch(addFoodToOrder(order));
+        return order
+    }
+}
+
+export const removeFoodFromOrderThunk = (food) => async (dispatch) => {
+    const response = await csrfFetch(`/api/orders/food`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(food)
+    });
+    if (response.ok) {
+        const order = await response.json();
+        dispatch(addFoodToOrder(order));
+        return order
+    }
+}
+
 const initialState = {
     allFoods: {},
     food: {},
@@ -147,6 +219,18 @@ export default function foodReducer(state = initialState, action) {
             return newState
         case GET_FOOD_AVG_RATING:
             newState.currentFoodRating = action.payload;
+            return newState
+        case GET_FOOD_ORDERS:
+            newState.currentFoodOrders = action.payload;
+            return newState
+        case CREATE_FOOD_ORDER:
+            newState.currentFoodOrders = action.payload;
+            return newState
+        case ADD_FOOD_TO_ORDER:
+            newState.currentFoodOrders = action.payload;
+            return newState
+        case REMOVE_FOOD_FROM_ORDER:
+            newState.currentFoodOrders = action.payload;
             return newState
         default:
             return state
