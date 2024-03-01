@@ -4,13 +4,13 @@ import { useHistory } from 'react-router-dom';
 import * as reviewActions from '../../store/review';
 // import './createreviewmodal.css'
 
-function CreateReviewModal({foodId}) {
+function CreateReviewModal({isOpen, onClose, foodId}) {
     const dispatch = useDispatch();
     const history = useHistory();
     const [review, setReview] = useState('');
     const [rating, setRating] = useState(0);
     const [errors, setErrors] = useState([]);
-
+    console.log('foodId: ', foodId)
     function isOnlyWhitespace(str) {
         return !str.trim().length;
     }
@@ -33,7 +33,7 @@ function CreateReviewModal({foodId}) {
             foodId
         }
 
-        const data = await dispatch(reviewActions.createReviewThunk(payload));
+        const data = await dispatch(reviewActions.createReviewThunk(foodId, payload));
         if (data.errors) {
             setErrors(data.errors);
         } else {
@@ -44,11 +44,12 @@ function CreateReviewModal({foodId}) {
     }
 
     return (
+        isOpen &&
         <div className='create-review-modal-container'>
             <div className='create-review-modal'>
                 <div className='create-review-modal-header'>
                     <h1>Create Review</h1>
-                    <button onClick={() => history.goBack()}>X</button>
+                    <button onClick={onClose}>X</button>
                 </div>
                 <form onSubmit={handleSubmit}>
                     <div className='create-review-modal-form'>
