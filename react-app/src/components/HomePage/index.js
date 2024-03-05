@@ -17,6 +17,8 @@ function HomePage() {
     const [isLoaded, setIsLoaded] = useState(false)
     const [isMenuModalOpen, setIsMenuModalOpen] = useState(false)
     const [isCreateFoodOrderModalOpen, setIsCreateFoodOrderModalOpen] = useState(false)
+    const [foodId, setFoodId] = useState(null)
+    const [food, setFood] = useState(null)
 
     useEffect(() => {
         setIsLoaded(false)
@@ -53,12 +55,19 @@ function HomePage() {
         setIsMenuModalOpen(false)
     }
 
-    const openCreateFoodOrderModal = () => {
+    const openCreateFoodOrderModal = (foodId) => {
         setIsCreateFoodOrderModalOpen(true)
+        setFoodId(foodId)
+        getCurrFood(foodId)
     }
 
     const closeCreateFoodOrderModal = () => {
         setIsCreateFoodOrderModalOpen(false)
+    }
+
+    const getCurrFood = (foodId) => {
+        let food = foods.find(food => food.id === foodId)
+        setFood(food)
     }
 
     return (
@@ -79,7 +88,7 @@ function HomePage() {
                                             <h3 className='menu-food-name'>{food?.name}</h3>
                                             <p className='menu-food-description'>Description: {food?.description}</p>
                                             <p className='menu-food-price'>Price: ${food.price}</p>
-                                            <button onClick={openCreateFoodOrderModal}>Add to Order</button>
+                                            {user && <button onClick={() =>openCreateFoodOrderModal(food.id)}>Add to Order</button>}
                                             <img src={food?.food_images[0]?.url} alt={food?.name} className='food-img'/>
                                         </div>
                                     </li>
@@ -99,8 +108,7 @@ function HomePage() {
                     </div>
 
                 )}
-                {isCreateFoodOrderModalOpen && <CreateFoodOrderModal isOpen={isCreateFoodOrderModalOpen} onClose={closeCreateFoodOrderModal}/>}
-
+                {user && isCreateFoodOrderModalOpen && <CreateFoodOrderModal user_id ={user?.id} food={food} menu_id={currentMenu?.current_menu?.id} isOpen={isCreateFoodOrderModalOpen} onClose={closeCreateFoodOrderModal}/>}
             </div>
         </div>
     )

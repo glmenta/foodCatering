@@ -139,6 +139,12 @@ export default function orderReducer(state = initialState, action) {
         case GET_ORDER:
             newState.order = action.payload;
             return newState
+        case GET_ORDER_FOODS_BY_ID:
+            newState.orderFoods = action.payload;
+            return newState
+        case CREATE_ORDER:
+            newState.order = action.payload;
+            return newState
         default:
             return state
     }
