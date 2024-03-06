@@ -127,10 +127,6 @@ export default function orderReducer(state = initialState, action) {
                 ...state,
                 allOrders: action.payload
             };
-            // for (const order of action.payload.orders) {
-            //     newState.allOrders[order.id] = order
-            // }
-            // return newState
         case GET_USER_ORDERS:
             for (const order of action.payload.orders) {
                 newState.currentUserOrders[order.id] = order
