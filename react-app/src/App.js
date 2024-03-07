@@ -11,6 +11,7 @@ import OrderPage from "./components/OrderPage/index.js";
 import CheckOrdersPage from "./components/CheckOrdersPage/index.js";
 import AdminOrderPage from "./components/AdminOrderPage/index.js";
 import CreateFoodPage from "./components/CreateFoodPage/index.js";
+import UserFoodOrdersPage from "./components/UserFoodOrdersPage/index.js";
 
 function App() {
   const dispatch = useDispatch();
@@ -47,6 +48,9 @@ function App() {
           </Route>
           <Route exact path="/create-food">
             <CreateFoodPage/>
+          </Route>
+          <Route exact path="/users/:userId/food-orders">
+            <UserFoodOrdersPage/>
           </Route>
         </Switch>
       )}

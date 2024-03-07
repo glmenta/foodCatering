@@ -7,6 +7,7 @@ const UPDATE_FOOD = "food/UPDATE_FOOD";
 const DELETE_FOOD = "food/DELETE_FOOD";
 const GET_FOOD_AVG_RATING = "food/GET_FOOD_AVG_RATING";
 const GET_FOOD_ORDERS = "food/GET_FOOD_ORDERS";
+const GET_USER_FOOD_ORDERS = "food/GET_USER_FOOD_ORDERS";
 const CREATE_FOOD_ORDER = "food/CREATE_FOOD_ORDER";
 const ADD_FOOD_TO_ORDER = "food/ADD_FOOD_TO_ORDER";
 const REMOVE_FOOD_FROM_ORDER = "food/REMOVE_FOOD_FROM_ORDER";
@@ -59,9 +60,23 @@ export const getFoodOrders = (foodOrders) => {
     }
 }
 
+export const getUserFoodOrders = (foodOrders) => {
+    return {
+        type: GET_USER_FOOD_ORDERS,
+        payload: foodOrders
+    }
+}
+
 export const createFoodOrder = (food) => {
     return {
         type: CREATE_FOOD_ORDER,
+        payload: food
+    }
+}
+
+export const removeFoodFromOrder = (food) => {
+    return {
+        type: REMOVE_FOOD_FROM_ORDER,
         payload: food
     }
 }
@@ -151,11 +166,19 @@ export const getFoodOrdersThunk = (foodId) => async (dispatch) => {
     }
 }
 
-export const createFoodOrderThunk = (food) => async (dispatch) => {
-    const response = await csrfFetch(`/api/orders/food`, {
+export const getUserFoodOrdersThunk = (userId) => async (dispatch) => {
+    const response = await csrfFetch(`/api/users/${userId}/foodorders`);
+    if (response.ok) {
+        const orders = await response.json();
+        dispatch(getUserFoodOrders(orders));
+        return orders
+    }
+}
+export const createFoodOrderThunk = (food_order, user_id) => async (dispatch) => {
+    const response = await csrfFetch(`/api/users/${user_id}/foodorders/new`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(food)
+        body: JSON.stringify(food_order)
     });
     if (response.ok) {
         const order = await response.json();
@@ -193,6 +216,8 @@ export const removeFoodFromOrderThunk = (food) => async (dispatch) => {
 const initialState = {
     allFoods: {},
     food: {},
+    currentUserFoodOrders: {},
+    currentFoodOrders: {},
     currentFoodRating: 0
 }
 
@@ -222,6 +247,9 @@ export default function foodReducer(state = initialState, action) {
             return newState
         case GET_FOOD_ORDERS:
             newState.currentFoodOrders = action.payload;
+            return newState
+        case GET_USER_FOOD_ORDERS:
+            newState.currentUserFoodOrders = action.payload;
             return newState
         case CREATE_FOOD_ORDER:
             newState.currentFoodOrders = action.payload;
