@@ -175,17 +175,32 @@ export const getUserFoodOrdersThunk = (userId) => async (dispatch) => {
     }
 }
 export const createFoodOrderThunk = (food_order, user_id) => async (dispatch) => {
-    const response = await csrfFetch(`/api/users/${user_id}/foodorders/new`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(food_order)
-    });
-    if (response.ok) {
-        const order = await response.json();
-        dispatch(createFoodOrder(order));
-        return order
+    console.log('inside thunk', food_order, user_id);
+    try {
+        const response = await csrfFetch(`/api/users/${user_id}/foodorders/new`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(food_order)
+        });
+
+        if (response.ok) {
+            const order = await response.json();
+            dispatch(createFoodOrder(order));
+            return order;
+        } else {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to create food order");
+        }
+    } catch (error) {
+        console.error("Error creating food order:", error);
+        if (error.response) {
+            const errorData = await error.response.json();
+            console.error("Server error data:", errorData);
+        }
+        throw error;
     }
-}
+
+};
 
 export const addFoodToOrderThunk = (food) => async (dispatch) => {
     const response = await csrfFetch(`/api/orders/food`, {
@@ -252,7 +267,7 @@ export default function foodReducer(state = initialState, action) {
             newState.currentUserFoodOrders = action.payload;
             return newState
         case CREATE_FOOD_ORDER:
-            newState.currentFoodOrders = action.payload;
+            newState.currentFoodOrders[action.payload.id] = action.payload;
             return newState
         case ADD_FOOD_TO_ORDER:
             newState.currentFoodOrders = action.payload;
