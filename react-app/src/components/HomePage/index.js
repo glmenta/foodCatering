@@ -56,10 +56,12 @@ function HomePage() {
     }
 
     const openCreateFoodOrderModal = (foodId) => {
-        setIsCreateFoodOrderModalOpen(true)
-        setFoodId(foodId)
-        getCurrFood(foodId)
-    }
+        setFoodId(foodId);
+        const currFood = foods.find(food => food.id === foodId);
+        setFood(currFood);
+        setIsCreateFoodOrderModalOpen(true);
+    };
+
 
     const closeCreateFoodOrderModal = () => {
         setIsCreateFoodOrderModalOpen(false)
@@ -72,7 +74,7 @@ function HomePage() {
 
     return (
         <div>
-            <h1>Home Page</h1>
+            <h1>Home Page !</h1>
             <div className='food-button'>
                 <button onClick={navigateToFoodPage}>View All Foods</button>
             </div>

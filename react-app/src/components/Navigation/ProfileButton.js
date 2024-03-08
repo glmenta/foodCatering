@@ -5,6 +5,7 @@ import { logout } from "../../store/session";
 import OpenModalButton from "../OpenModalButton";
 import LoginFormModal from "../LoginFormModal";
 import SignupFormModal from "../SignupFormModal";
+import UserFoodOrdersPage from "../UserFoodOrdersPage";
 
 function ProfileButton({ user }) {
   const dispatch = useDispatch();
@@ -47,6 +48,11 @@ function ProfileButton({ user }) {
     setShowMenu(false);
   }
 
+  const handleCartButton = (e) => {
+    e.preventDefault();
+    history.push(`/users/${user.id}/food-orders`)
+    setShowMenu(false);
+  }
   const ulClassName = "profile-dropdown" + (showMenu ? "" : " hidden");
   const closeMenu = () => setShowMenu(false);
 
@@ -65,6 +71,9 @@ function ProfileButton({ user }) {
             </li>
             <div>
               <button onClick={handleOrderButton}>View Orders</button>
+            </div>
+            <div>
+              <button onClick={handleCartButton}>View Cart</button>
             </div>
             {user?.isAdmin && (
               <div>

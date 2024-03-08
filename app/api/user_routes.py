@@ -66,24 +66,19 @@ def user_foodorders(id):
 def create_food_order(id):
     user = User.query.get(id)
 
-    # Check if the user exists
     if user is None:
         return jsonify({'error': 'User not found'}), 404
 
-    # Check if the current user is the owner of the requested user's data
     if user.id != current_user.id:
         return jsonify({'error': 'You cannot add food to another user\'s order'}), 401
 
-    # Get the JSON data from the request
     foodorder_data = request.get_json()
 
-    # Create the form instance with the provided data
     form = FoodOrderForm(food_menu_id=foodorder_data.get('menu_id'), foodorder_data=foodorder_data)
     form['csrf_token'].data = request.cookies['csrf_token']
 
     print('Request Data:', request.get_json())
     print('Available Choices:', form.food.choices)
-    # Validate the form
     if form.validate():
         # Retrieve the selected food and quantity from the form
         selected_food_id = form.food.data

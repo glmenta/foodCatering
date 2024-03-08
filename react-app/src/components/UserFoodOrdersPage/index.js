@@ -11,7 +11,7 @@ import CreateFoodOrderModal from "../CreateFoodOrderModal";
 const UserFoodOrdersPage = () => {
     const dispatch = useDispatch();
     const user_id = useSelector(state => state.session.user?.id);
-    const userFoodOrders = useSelector(state => state.order.currentUserFoodOrders);
+    const userFoodOrders = useSelector(state => state.food.currentUserFoodOrders);
 
     useEffect(() => {
         dispatch(foodActions.getUserFoodOrdersThunk(user_id));
@@ -20,14 +20,12 @@ const UserFoodOrdersPage = () => {
     return (
         <div>
             <h1>My Orders</h1>
-            <ul>
-                {userFoodOrders?.map(order => (
-                    <li key={order.id}>
-                        <OrderDetailModal order={order} />
-                        <CreateFoodOrderModal user_id={user_id} menu_id={order.menu_id} food={order.food} />
-                    </li>
-                ))}
-            </ul>
+            {userFoodOrders && userFoodOrders.food_orders.map(food_order => (
+                <div>
+                    <h3>{food_order.food.name}</h3>
+                    <p>{food_order.quantity}</p>
+                </div>
+            ))}
         </div>
     )
 }
