@@ -90,7 +90,7 @@ function HomePage() {
                                             <h3 className='menu-food-name'>{food?.name}</h3>
                                             <p className='menu-food-description'>Description: {food?.description}</p>
                                             <p className='menu-food-price'>Price: ${food.price}</p>
-                                            {user && <button onClick={() =>openCreateFoodOrderModal(food.id)}>Add to Order</button>}
+                                            {user && <button onClick={() =>openCreateFoodOrderModal(food.id)}>Add to Cart</button>}
                                             <img src={food?.food_images[0]?.url} alt={food?.name} className='food-img'/>
                                         </div>
                                     </li>
