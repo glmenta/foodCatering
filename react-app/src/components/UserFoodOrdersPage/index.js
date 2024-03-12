@@ -16,6 +16,8 @@ const UserFoodOrdersPage = () => {
     const [popupOpen, setPopupOpen] = useState(false);
     const [userOrdersOpen, setUserOrdersOpen] = useState(false);
     const [createOrderModalOpen, setCreateOrderModalOpen] = useState(false);
+    const [selectedOrderId, setSelectedOrderId] = useState('');
+    const [selectedFoodOrder, setSelectedFoodOrder] = useState(null);
     const [isLoaded, setIsLoaded] = useState(true);
 
     useEffect(() => {
@@ -30,7 +32,8 @@ const UserFoodOrdersPage = () => {
         }
     }, [dispatch, user_id]);
 
-    const openPopup = () => {
+    const openPopup = (food_order) => {
+        setSelectedFoodOrder(food_order);
         setPopupOpen(true);
     };
 
@@ -59,49 +62,59 @@ const UserFoodOrdersPage = () => {
         openPopup();
     };
 
+    const handleAddToOrder = async () => {
+        if (!selectedOrderId || !selectedFoodOrder || !selectedFoodOrder.food || !selectedFoodOrder.food.id || !selectedFoodOrder.quantity) return;
+        console.log('inside handleAddToOrder', selectedOrderId, selectedFoodOrder);
+        const food = {
+            food_id: selectedFoodOrder.food.id,
+            quantity: selectedFoodOrder.quantity
+        };
+        console.log('inside handleAddToOrder', food);
+        await dispatch(orderActions.addFoodToOrderThunk(food, selectedOrderId));
+        setPopupOpen(false);
+    };
+
     return (
         <div className='user-food-orders-container'>
-        {isLoaded &&
-            <div className='user-food-orders'>
-                <h1>Cart</h1>
-                {userFoodOrders?.food_orders && userFoodOrders.food_orders.map(food_order => (
-                    <div key={food_order.id}>
-                        <h3>{food_order.food.name}</h3>
-                        <p>{food_order.quantity}</p>
-                        <button onClick={openPopup}>Add to Order</button>
-                    </div>
-                ))}
-            </div>
-            }
+            {isLoaded && (
+                <div className='user-food-orders'>
+                    <h1>Cart</h1>
+                    {userFoodOrders?.food_orders && userFoodOrders.food_orders
+                        .filter(food_order => food_order.order_id === null || food_order.order_id === undefined)
+                        .map(food_order => (
+                            <div key={food_order.id}>
+                                <h3>{food_order.food.name}</h3>
+                                <p>{food_order.quantity}</p>
+                                <button onClick={() => openPopup(food_order)}>Add to Order</button>
+                            </div>
+                        ))}
+                </div>
+            )}
 
-        {popupOpen && (
-            <div className='pop-up-prompt'>
-                <p>Do you want to add to an existing order or create a new one?</p>
-                <select onChange={(e) => console.log(e.target.value)}>
-                    <option value="">Select an Existing Order</option>
-                    {Object.values(userOrders).map(order => (
-                        <option key={order.id} value={order.id}>
-                            {order.order_name}
-                            {/*
-                            function here to add food order to order
-                            */}
-                        </option>
-                    ))}
-                </select>
-                <button onClick={openCreateFoodOrderModal}>Create New Order</button>
-            </div>
-        )}
+            {popupOpen && (
+                <div className='pop-up-prompt'>
+                    <p>Do you want to add to an existing order or create a new one?</p>
+                    <select onChange={(e) => setSelectedOrderId(e.target.value)}>
+                        <option value="">Select an Existing Order</option>
+                        {Object.values(userOrders).map(order => (
+                            <option key={order.id} value={order.id}>
+                                {order.order_name}
+                            </option>
+                        ))}
+                    </select>
+                    <button onClick={() => handleAddToOrder(selectedFoodOrder)}>Add to Selected Order</button>
+                    <button onClick={openCreateFoodOrderModal}>Create New Order</button>
+                </div>
+            )}
 
-
-        {createOrderModalOpen &&
-            <div className='create-order-modal'>
-                <CreateOrderModal isOpen={createOrderModalOpen} onClose={closeCreateFoodOrderModal} />
-            </div>
-        }
-
-
+            {createOrderModalOpen && (
+                <div className='create-order-modal'>
+                    <CreateOrderModal isOpen={createOrderModalOpen} onClose={closeCreateFoodOrderModal} />
+                </div>
+            )}
         </div>
     );
+
 }
 
 export default UserFoodOrdersPage

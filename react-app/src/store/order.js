@@ -3,7 +3,8 @@ import { csrfFetch } from "./csrf";
 const GET_ALL_ORDERS = "order/GET_ALL_ORDERS";
 const GET_USER_ORDERS = "order/GET_USER_ORDERS";
 const GET_ORDER = "order/GET_ORDER";
-const GET_ORDER_FOODS_BY_ID = "order/GET_ORDER_FOODS_BY_ID"
+const ADD_FOOD_TO_ORDER = "order/ADD_FOOD_TO_ORDER"
+const REMOVE_FOOD_FROM_ORDER = "order/REMOVE_FOOD_FROM_ORDER"
 const CREATE_ORDER = "order/CREATE_ORDER";
 const UPDATE_ORDER = "order/UPDATE_ORDER";
 const DELETE_ORDER = "order/DELETE_ORDER";
@@ -22,9 +23,14 @@ export const getOrder = (order) => ({
     payload: order
 })
 
-export const getOrderFoodsById = (orderFoods) => ({
-    type: GET_ORDER_FOODS_BY_ID,
-    payload: orderFoods
+export const addFoodToOrder = (food, order_id) => ({
+    type: ADD_FOOD_TO_ORDER,
+    payload: { food, order_id }
+})
+
+export const removeFoodFromOrder = (food, order_id) => ({
+    type: REMOVE_FOOD_FROM_ORDER,
+    payload: { food, order_id }
 })
 
 export const createOrder = (order) => ({
@@ -114,6 +120,31 @@ export const deleteOrderThunk = (orderId) => async (dispatch) => {
     }
 }
 
+export const addFoodToOrderThunk = (food, orderId) => async (dispatch) => {
+    const response = await csrfFetch(`/api/orders/${orderId}/add`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(food)
+    });
+    if (response.ok) {
+        const newFood = await response.json();
+        dispatch(addFoodToOrder(newFood, orderId));
+        return newFood
+    }
+}
+
+export const removeFoodFromOrderThunk = (food, orderId) => async (dispatch) => {
+    const response = await csrfFetch(`/api/orders/${orderId}/delete/${food.id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(food)
+    });
+    if (response.ok) {
+        const newFood = await response.json();
+        dispatch(removeFoodFromOrder(newFood, orderId));
+        return newFood
+    }
+}
 const initialState = {
     currentUserOrders: {},
     allOrders: []
@@ -135,10 +166,19 @@ export default function orderReducer(state = initialState, action) {
         case GET_ORDER:
             newState.order = action.payload;
             return newState
-        case GET_ORDER_FOODS_BY_ID:
-            newState.orderFoods = action.payload;
-            return newState
         case CREATE_ORDER:
+            newState.order = action.payload;
+            return newState
+        case UPDATE_ORDER:
+            newState.order = action.payload;
+            return newState
+        case DELETE_ORDER:
+            newState.order = action.payload;
+            return newState
+        case ADD_FOOD_TO_ORDER:
+            newState.order = action.payload;
+            return newState
+        case REMOVE_FOOD_FROM_ORDER:
             newState.order = action.payload;
             return newState
         default:
