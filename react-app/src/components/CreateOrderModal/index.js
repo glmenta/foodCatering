@@ -21,6 +21,7 @@ function CreateOrderModal({ isOpen, onClose }) {
         <div className='create-order-modal-container'>
             <div>
                 <h1>Create Order</h1>
+                <button onClick={onClose}>Back to Cart</button>
             </div>
         </div>
     )
