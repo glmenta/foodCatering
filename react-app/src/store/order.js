@@ -121,8 +121,9 @@ export const deleteOrderThunk = (orderId) => async (dispatch) => {
 }
 
 export const addFoodToOrderThunk = (food, orderId) => async (dispatch) => {
-    const response = await csrfFetch(`/api/orders/${orderId}/add`, {
-        method: "POST",
+    console.log(orderId)
+    const response = await csrfFetch(`/api/orders/${orderId}/add/${food.id}`, {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(food)
     });
@@ -176,11 +177,21 @@ export default function orderReducer(state = initialState, action) {
             newState.order = action.payload;
             return newState
         case ADD_FOOD_TO_ORDER:
-            newState.order = action.payload;
-            return newState
+            return {
+                ...state,
+                currentUserOrders: {
+                    ...state.currentUserOrders,
+                    [action.payload.orderId]: action.payload.order
+                }
+            };
         case REMOVE_FOOD_FROM_ORDER:
-            newState.order = action.payload;
-            return newState
+            return {
+                ...state,
+                currentUserOrders: {
+                    ...state.currentUserOrders,
+                    [action.payload.orderId]: action.payload.order
+                }
+            };
         default:
             return state
     }

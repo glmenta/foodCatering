@@ -8,3 +8,9 @@ food_order_routes = Blueprint('food_orders', __name__)
 def get_food_orders():
     food_orders = FoodOrder.query.all()
     return {'food_orders': [foodorder.to_dict() for foodorder in food_orders]}
+
+
+@food_order_routes.route('/<int:id>')
+def get_food_order(id):
+    food_order = FoodOrder.query.get(id)
+    return {'food_order': food_order.to_dict()}

@@ -55,53 +55,95 @@ def create_order():
         return jsonify(errors=order_form.errors), 400
 
 #add food to order if userId matches order userId
-@order_routes.route('/<int:id>/add', methods=['POST'])
-@login_required
-def add_food_to_order(id):
-    user_id = current_user.id
-    order = Order.query.get(id)
+# @order_routes.route('/<int:order_id>/add/<int:food_order_id>', methods=['PATCH'])
+# @login_required
+# def add_food_to_order(order_id, food_order_id):
+#     user_id = current_user.id
+#     order = Order.query.get(order_id)
+#     food_order = FoodOrder.query.get(food_order_id)
+#     print('food order id:', food_order)
 
-    if order is None or order.user_id != user_id:
+#     if order is None or order.user_id != user_id:
+#         return jsonify({'error': 'Order not found or does not belong to the current user'}), 404
+
+#     if food_order is None or food_order.user_id != user_id:
+#         return jsonify({'error': 'Food order not found or does not belong to the current user'}), 404
+
+#     current_menu_id = current_app.config.get('CURRENT_MENU_ID')
+
+#     if current_menu_id is None:
+#         return jsonify({'error': 'Current menu not set'}), 404
+
+#     current_menu = FoodMenu.query.get(current_menu_id)
+
+#     if current_menu is None:
+#         return jsonify({'error': 'Current menu not found'}), 404
+
+#     available_foods = current_menu.foods
+
+#     order_data = request.json
+
+#     if not order_data or 'food_id' not in order_data or 'quantity' not in order_data:
+#         return jsonify({'error': 'Invalid JSON data. Food_id and quantity are required'}), 400
+
+#     food_id = order_data['food_id']
+#     quantity = order_data['quantity']
+
+#     selected_food = Food.query.get(food_id)
+
+#     if selected_food is None or selected_food not in available_foods:
+#         return jsonify({'error': 'Invalid food selection'}), 400
+
+#     existing_food_order = FoodOrder.query.filter_by(id=food_order_id, order_id=order_id, food_id=food_id).first()
+
+#     if existing_food_order:
+#         existing_food_order.quantity += quantity
+#     else:
+#         return jsonify({'error': 'Food order not found in cart'}), 404
+
+#     db.session.commit()
+
+#     return jsonify({'success': 'Food added to order successfully', 'order': order.to_dict()}), 200
+# Assuming you have the necessary imports and route setup
+
+@order_routes.route('/<int:order_id>/add/<int:food_order_id>', methods=['PATCH'])
+@login_required
+def add_food_to_order(order_id, food_order_id):
+    user_id = current_user.id
+
+    # Fetch the order and food_order from the database
+    order = Order.query.get(order_id)
+    food_order = FoodOrder.query.get(food_order_id)
+
+    # Check if the order exists and belongs to the current user
+    if not order or order.user_id != user_id:
         return jsonify({'error': 'Order not found or does not belong to the current user'}), 404
 
-    current_menu_id = current_app.config.get('CURRENT_MENU_ID')
+    # Check if the food_order exists
+    if not food_order:
+        return jsonify({'error': 'Food order not found'}), 404
 
-    if current_menu_id is None:
-        return jsonify({'error': 'Current menu not set'}), 404
-
-    current_menu = FoodMenu.query.get(current_menu_id)
-
-    if current_menu is None:
-        return jsonify({'error': 'Current menu not found'}), 404
-
-    available_foods = current_menu.foods
-
+    # Retrieve the quantity from the request JSON
     order_data = request.json
-
-    if not order_data or 'food_id' not in order_data or 'quantity' not in order_data:
-        return jsonify({'error': 'Invalid JSON data. Food_id and quantity are required'}), 400
-
-    food_id = order_data['food_id']
+    if not order_data or 'quantity' not in order_data:
+        return jsonify({'error': 'Invalid JSON data. Quantity is required'}), 400
     quantity = order_data['quantity']
 
-    selected_food = Food.query.get(food_id)
-
-    if selected_food is None or selected_food not in available_foods:
-        return jsonify({'error': 'Invalid food selection'}), 400
-
-    # Check if the food is already in the order, if yes, update the quantity
-    existing_food_order = FoodOrder.query.filter_by(order_id=id, food_id=food_id).first()
-
-    if existing_food_order:
-        existing_food_order.quantity += quantity
+    # Check if the food_order is already associated with the order
+    if food_order.order_id == order_id:
+        # Update the quantity of the existing food_order
+        food_order.quantity += quantity
     else:
-        food_order = FoodOrder(user_id=user_id, order_id=id, food=selected_food, quantity=quantity)
-
-        order.food_orders.append(food_order)
+        # Create a new food_order and associate it with the order
+        new_food_order = FoodOrder(user_id=user_id, order_id=order_id, food=food_order.food, quantity=quantity)
+        order.food_orders.append(new_food_order)
 
     db.session.commit()
 
     return jsonify({'success': 'Food added to order successfully', 'order': order.to_dict()}), 200
+
+
+
 
 @order_routes.route('/<int:order_id>/delete/<int:food_order_id>', methods=['PATCH'])
 @login_required
@@ -123,10 +165,22 @@ def remove_food_order_from_order(order_id, food_order_id):
     if quantity_from_data <= 0 or not isinstance(quantity_from_data, int):
         return jsonify({'error': 'Invalid quantity value'}), 400
 
-    if quantity_from_data >= food_order.quantity:
-        order.food_orders.remove(food_order)
-    else:
-        food_order.quantity -= quantity_from_data
+    # Retrieve the list of food orders from the order
+    food_orders = order.food_orders
+
+    # Iterate over the food orders to find and remove the specified food order
+    for order in food_orders:
+        if order.id == food_order_id:
+            if quantity_from_data >= order.quantity:
+                # Reset the food order's order_id to None
+                order.order_id = None
+                # Remove the food order from the list of food orders
+                order.quantity = 0
+            else:
+                # Update the quantity of the food order
+                order.quantity -= quantity_from_data
+            break
+
     db.session.commit()
 
     return jsonify({'message': 'Food order removed from order successfully', 'order': order.to_dict()}), 200
