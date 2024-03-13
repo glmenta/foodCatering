@@ -19,6 +19,7 @@ const UserFoodOrdersPage = () => {
     const [selectedOrderId, setSelectedOrderId] = useState('');
     const [selectedFoodOrder, setSelectedFoodOrder] = useState(null);
     const [isLoaded, setIsLoaded] = useState(true);
+    const [addedFoodOrderIds, setAddedFoodOrderIds] = useState([]);
 
     useEffect(() => {
         dispatch(sessionActions.getAllUsersThunk());
@@ -35,6 +36,7 @@ const UserFoodOrdersPage = () => {
     const openPopup = (food_order) => {
         setSelectedFoodOrder(food_order);
         setPopupOpen(true);
+        console.log('inside openPopup', food_order);
     };
 
     const closePopup = () => {
@@ -72,6 +74,7 @@ const UserFoodOrdersPage = () => {
         console.log('inside handleAddToOrder', food);
         await dispatch(orderActions.addFoodToOrderThunk(food, selectedOrderId));
         setPopupOpen(false);
+        setAddedFoodOrderIds(prevIds => [...prevIds, selectedFoodOrder.id]);
     };
 
     return (
@@ -80,7 +83,8 @@ const UserFoodOrdersPage = () => {
                 <div className='user-food-orders'>
                     <h1>Cart</h1>
                     {userFoodOrders?.food_orders && userFoodOrders.food_orders
-                        .filter(food_order => food_order.order_id === null || food_order.order_id === undefined)
+                        .filter(food_order => !addedFoodOrderIds.includes(food_order.id)) // Filter out added food orders
+                        .filter(food_order => food_order.order_id === null)
                         .map(food_order => (
                             <div key={food_order.id}>
                                 <h3>{food_order.food.name}</h3>
@@ -97,8 +101,8 @@ const UserFoodOrdersPage = () => {
                     <select onChange={(e) => setSelectedOrderId(e.target.value)}>
                         <option value="">Select an Existing Order</option>
                         {Object.values(userOrders).map(order => (
-                            <option key={order.id} value={order.id}>
-                                {order.order_name}
+                            <option key={order?.id} value={order?.id}>
+                                {order?.order_name}
                             </option>
                         ))}
                     </select>
