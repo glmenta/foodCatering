@@ -54,58 +54,6 @@ def create_order():
     else:
         return jsonify(errors=order_form.errors), 400
 
-#add food to order if userId matches order userId
-# @order_routes.route('/<int:order_id>/add/<int:food_order_id>', methods=['PATCH'])
-# @login_required
-# def add_food_to_order(order_id, food_order_id):
-#     user_id = current_user.id
-#     order = Order.query.get(order_id)
-#     food_order = FoodOrder.query.get(food_order_id)
-#     print('food order id:', food_order)
-
-#     if order is None or order.user_id != user_id:
-#         return jsonify({'error': 'Order not found or does not belong to the current user'}), 404
-
-#     if food_order is None or food_order.user_id != user_id:
-#         return jsonify({'error': 'Food order not found or does not belong to the current user'}), 404
-
-#     current_menu_id = current_app.config.get('CURRENT_MENU_ID')
-
-#     if current_menu_id is None:
-#         return jsonify({'error': 'Current menu not set'}), 404
-
-#     current_menu = FoodMenu.query.get(current_menu_id)
-
-#     if current_menu is None:
-#         return jsonify({'error': 'Current menu not found'}), 404
-
-#     available_foods = current_menu.foods
-
-#     order_data = request.json
-
-#     if not order_data or 'food_id' not in order_data or 'quantity' not in order_data:
-#         return jsonify({'error': 'Invalid JSON data. Food_id and quantity are required'}), 400
-
-#     food_id = order_data['food_id']
-#     quantity = order_data['quantity']
-
-#     selected_food = Food.query.get(food_id)
-
-#     if selected_food is None or selected_food not in available_foods:
-#         return jsonify({'error': 'Invalid food selection'}), 400
-
-#     existing_food_order = FoodOrder.query.filter_by(id=food_order_id, order_id=order_id, food_id=food_id).first()
-
-#     if existing_food_order:
-#         existing_food_order.quantity += quantity
-#     else:
-#         return jsonify({'error': 'Food order not found in cart'}), 404
-
-#     db.session.commit()
-
-#     return jsonify({'success': 'Food added to order successfully', 'order': order.to_dict()}), 200
-# Assuming you have the necessary imports and route setup
-
 @order_routes.route('/<int:order_id>/add/<int:food_order_id>', methods=['PATCH'])
 @login_required
 def add_food_to_order(order_id, food_order_id):
@@ -184,3 +132,28 @@ def remove_food_order_from_order(order_id, food_order_id):
     db.session.commit()
 
     return jsonify({'message': 'Food order removed from order successfully', 'order': order.to_dict()}), 200
+
+@order_routes.route('/<int:order_id>/update/<int:food_order_id>', methods=['PATCH'])
+@login_required
+def update_food_order_quantity(order_id, food_order_id):
+    user_id = current_user.id
+    order = Order.query.get(order_id)
+
+    if order is None or order.user_id != user_id:
+        return jsonify({'error': 'Order not found or does not belong to the current user'}), 404
+
+    food_order = FoodOrder.query.get(food_order_id)
+
+    if food_order is None or food_order.order_id != order_id:
+        return jsonify({'error': 'Food order not found in the specified order'}), 404
+
+    data = request.get_json()
+    quantity_from_data = data.get('quantity')
+
+    if quantity_from_data is None or quantity_from_data <= 0 or not isinstance(quantity_from_data, int):
+        return jsonify({'error': 'Invalid quantity value'}), 400
+
+    food_order.quantity = quantity_from_data
+    db.session.commit()
+
+    return jsonify({'message': 'Food order quantity updated successfully', 'order': order.to_dict()}), 200

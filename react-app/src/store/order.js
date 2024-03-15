@@ -5,6 +5,7 @@ const GET_USER_ORDERS = "order/GET_USER_ORDERS";
 const GET_ORDER = "order/GET_ORDER";
 const ADD_FOOD_TO_ORDER = "order/ADD_FOOD_TO_ORDER"
 const REMOVE_FOOD_FROM_ORDER = "order/REMOVE_FOOD_FROM_ORDER"
+const UPDATE_FOOD_ORDER_QUANTITIES = "order/UPDATE_FOOD_ORDER_QUANTITIES"
 const CREATE_ORDER = "order/CREATE_ORDER";
 const UPDATE_ORDER = "order/UPDATE_ORDER";
 const DELETE_ORDER = "order/DELETE_ORDER";
@@ -30,6 +31,11 @@ export const addFoodToOrder = (food, order_id) => ({
 
 export const removeFoodFromOrder = (food, order_id) => ({
     type: REMOVE_FOOD_FROM_ORDER,
+    payload: { food, order_id }
+})
+
+export const updateFoodOrderQuantities = (food, order_id) => ({
+    type: UPDATE_FOOD_ORDER_QUANTITIES,
     payload: { food, order_id }
 })
 
@@ -146,6 +152,20 @@ export const removeFoodFromOrderThunk = (food, orderId) => async (dispatch) => {
         return newFood
     }
 }
+
+export const updateFoodOrderQuantitiesThunk = (food, orderId) => async (dispatch) => {
+    const response = await csrfFetch(`/api/orders/${orderId}/update/${food.id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(food)
+    });
+    if (response.ok) {
+        const newFood = await response.json();
+        dispatch(updateFoodOrderQuantities(newFood, orderId));
+        return newFood
+    }
+}
+
 const initialState = {
     currentUserOrders: {},
     allOrders: []
@@ -192,6 +212,14 @@ export default function orderReducer(state = initialState, action) {
                     [action.payload.orderId]: action.payload.order
                 }
             };
+        case UPDATE_FOOD_ORDER_QUANTITIES:
+            return {
+                ...state,
+                currentUserOrders: {
+                    ...state.currentUserOrders,
+                    [action.payload.orderId]: action.payload.order
+                }
+            }
         default:
             return state
     }
