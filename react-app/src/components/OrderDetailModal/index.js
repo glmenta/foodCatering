@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
 import * as orderActions from "../../store/order";
 // import './orderdetail.css'
 
@@ -20,12 +19,15 @@ function OrderDetailModal({ isOpen, onClose, orderId, orderMessages }) {
     console.log('Order: ', order)
 
     const updateQuantity = (foodOrderId, delta, initialQuantity) => {
+        console.log('inside updateQuantity', foodOrderId, delta, initialQuantity);
         const updatedQuantity = (quantityUpdates[foodOrderId] || initialQuantity || 0) + delta;
         const newQuantity = Math.max(updatedQuantity, 0);
+        console.log('newQuantity: ', newQuantity);
         setQuantityUpdates({ ...quantityUpdates, [foodOrderId]: newQuantity });
 
+        console.log('inside updateQuantity', orderId, foodOrderId);
         if (newQuantity === 0 && foodOrderId) {
-            dispatch(orderActions.removeFoodFromOrderThunk(orderId, foodOrderId));
+            dispatch(orderActions.updateFoodOrderQuantitiesThunk(orderId, foodOrderId));
             setShowConfirmation(true);
         }
     };
@@ -54,6 +56,7 @@ function OrderDetailModal({ isOpen, onClose, orderId, orderMessages }) {
                     <div className='food-order-detail' key={foodOrder.id}>
                         <div>Food Name: {foodOrder?.food.name}</div>
                         <div>Price: ${foodOrder?.food.price}</div>
+                        <img src={foodOrder?.food?.food_images[0]?.url}></img>
                         <div>{quantityUpdates[foodOrder.id] || foodOrder.quantity}</div>
                         <div>
                             <button onClick={() => updateQuantity(foodOrder.id, -1, foodOrder.quantity)}>-</button>

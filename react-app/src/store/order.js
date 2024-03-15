@@ -127,8 +127,8 @@ export const deleteOrderThunk = (orderId) => async (dispatch) => {
 }
 
 export const addFoodToOrderThunk = (food, orderId) => async (dispatch) => {
-    console.log(orderId)
-    const response = await csrfFetch(`/api/orders/${orderId}/add/${food.id}`, {
+    console.log(orderId, food);
+    const response = await csrfFetch(`/api/orders/${orderId}/add/${food.food_id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(food)
@@ -142,7 +142,7 @@ export const addFoodToOrderThunk = (food, orderId) => async (dispatch) => {
 
 export const removeFoodFromOrderThunk = (food, orderId) => async (dispatch) => {
     const response = await csrfFetch(`/api/orders/${orderId}/delete/${food.id}`, {
-        method: "POST",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(food)
     });
@@ -155,7 +155,7 @@ export const removeFoodFromOrderThunk = (food, orderId) => async (dispatch) => {
 
 export const updateFoodOrderQuantitiesThunk = (food, orderId) => async (dispatch) => {
     const response = await csrfFetch(`/api/orders/${orderId}/update/${food.id}`, {
-        method: "POST",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(food)
     });
