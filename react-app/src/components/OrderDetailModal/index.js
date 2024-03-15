@@ -54,6 +54,7 @@ function OrderDetailModal({ isOpen, onClose, orderId, orderMessages }) {
                     <div className='food-order-detail' key={foodOrder.id}>
                         <div>Food Name: {foodOrder?.food.name}</div>
                         <div>Price: ${foodOrder?.food.price}</div>
+                        <img src={foodOrder?.food?.food_images[0]?.url}></img>
                         <div>{quantityUpdates[foodOrder.id] || foodOrder.quantity}</div>
                         <div>
                             <button onClick={() => updateQuantity(foodOrder.id, -1, foodOrder.quantity)}>-</button>

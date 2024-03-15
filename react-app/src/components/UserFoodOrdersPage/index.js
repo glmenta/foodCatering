@@ -83,8 +83,9 @@ const UserFoodOrdersPage = () => {
                 <div className='user-food-orders'>
                     <h1>Cart</h1>
                     {userFoodOrders?.food_orders && userFoodOrders.food_orders
-                        .filter(food_order => !addedFoodOrderIds.includes(food_order.id)) // Filter out added food orders
+                        .filter(food_order => !addedFoodOrderIds.includes(food_order.id))
                         .filter(food_order => food_order.order_id === null)
+                        .filter(food_order => food_order.quantity > 0)
                         .map(food_order => (
                             <div key={food_order.id}>
                                 <h3>{food_order.food.name}</h3>

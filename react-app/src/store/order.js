@@ -127,8 +127,8 @@ export const deleteOrderThunk = (orderId) => async (dispatch) => {
 }
 
 export const addFoodToOrderThunk = (food, orderId) => async (dispatch) => {
-    console.log(orderId)
-    const response = await csrfFetch(`/api/orders/${orderId}/add/${food.id}`, {
+    console.log(orderId, food);
+    const response = await csrfFetch(`/api/orders/${orderId}/add/${food.food_id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(food)
