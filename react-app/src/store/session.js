@@ -3,6 +3,7 @@ import {csrfFetch} from "./csrf";
 const SET_USER = "session/SET_USER";
 const REMOVE_USER = "session/REMOVE_USER";
 const GET_ALL_USERS = "session/GET_ALL_USERS";
+const GET_USER_FOOD_ORDERS = "session/GET_USER_FOOD_ORDERS";
 
 const setUser = (user) => ({
 	type: SET_USER,
@@ -18,7 +19,10 @@ const getAllUsers = (users) => ({
 	payload: users
 })
 
-const initialState = { user: null };
+const getUserFoodOrders = (foodOrders) => ({
+	type: GET_USER_FOOD_ORDERS,
+	payload: foodOrders
+})
 
 export const authenticate = () => async (dispatch) => {
 	const response = await fetch("/api/auth/", {
@@ -111,6 +115,15 @@ export const getAllUsersThunk = () => async (dispatch) => {
 	}
 }
 
+export const getUserFoodOrdersThunk = (userId) => async (dispatch) => {
+	const response = await csrfFetch(`/api/users/${userId}/foodorders`);
+	if (response.ok) {
+		const orders = await response.json();
+		dispatch(getUserFoodOrders(orders));
+		return orders
+	}
+}
+const initialState = { user: null, userFoodOrders: {} };
 export default function reducer(state = initialState, action) {
 	switch (action.type) {
 		case SET_USER:
@@ -119,6 +132,8 @@ export default function reducer(state = initialState, action) {
 			return { user: null };
 		case GET_ALL_USERS:
 			return { ...state, users: action.payload }
+		case GET_USER_FOOD_ORDERS:
+			return { ...state, userFoodOrders: action.payload }
 		default:
 			return state;
 	}

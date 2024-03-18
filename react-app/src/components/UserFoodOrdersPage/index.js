@@ -6,16 +6,19 @@ import * as sessionActions from "../../store/session";
 import * as foodActions from "../../store/food";
 import OrderDetailModal from "../OrderDetailModal";
 import CreateOrderModal from "../CreateOrderModal";
-
+import DeleteFoodOrderModal from "../DeleteFoodOrderModal";
 
 const UserFoodOrdersPage = () => {
     const dispatch = useDispatch();
+
     const user_id = useSelector(state => state.session.user?.id);
     const userFoodOrders = useSelector(state => state.food.currentUserFoodOrders);
     const userOrders = useSelector(state => Object.values(state.order.currentUserOrders));
+
     const [popupOpen, setPopupOpen] = useState(false);
     const [userOrdersOpen, setUserOrdersOpen] = useState(false);
     const [createOrderModalOpen, setCreateOrderModalOpen] = useState(false);
+    const [deleteFoodOrderModalOpen, setDeleteFoodOrderModalOpen] = useState(false);
     const [selectedOrderId, setSelectedOrderId] = useState('');
     const [selectedFoodOrder, setSelectedFoodOrder] = useState(null);
     const [isLoaded, setIsLoaded] = useState(true);
@@ -54,6 +57,17 @@ const UserFoodOrdersPage = () => {
         setIsLoaded(true);
     };
 
+    const openDeleteFoodOrderModal = (food_order) => {
+        setDeleteFoodOrderModalOpen(true);
+        setSelectedFoodOrder(food_order);
+        setIsLoaded(false);
+        closePopup();
+    }
+    const closeDeleteFoodOrderModal = () => {
+        setDeleteFoodOrderModalOpen(false);
+        setIsLoaded(true);
+    }
+
     const showUserOrders = () => {
         setUserOrdersOpen(true);
         closePopup();
@@ -91,6 +105,7 @@ const UserFoodOrdersPage = () => {
                                 <h3>{food_order.food.name}</h3>
                                 <p>{food_order.quantity}</p>
                                 <button onClick={() => openPopup(food_order)}>Add to Order</button>
+                                <button onClick={() => openDeleteFoodOrderModal(food_order)}>Remove from Cart</button>
                             </div>
                         ))}
                 </div>
@@ -108,7 +123,7 @@ const UserFoodOrdersPage = () => {
                         ))}
                     </select>
                     <button onClick={() => handleAddToOrder(selectedFoodOrder)}>Add to Selected Order</button>
-                    <button onClick={openCreateFoodOrderModal}>Create New Order</button>
+                    <button onClick={openCreateFoodOrderModal}>Add to Order</button>
                 </div>
             )}
 
@@ -117,6 +132,13 @@ const UserFoodOrdersPage = () => {
                     <CreateOrderModal isOpen={createOrderModalOpen} onClose={closeCreateFoodOrderModal} />
                 </div>
             )}
+
+            {deleteFoodOrderModalOpen && (
+                <div className='delete-food-order-modal'>
+                    <DeleteFoodOrderModal isOpen={deleteFoodOrderModalOpen} onClose={closeDeleteFoodOrderModal} foodOrder={selectedFoodOrder} />
+                </div>
+            )}
+
         </div>
     );
 

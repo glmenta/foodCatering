@@ -9,6 +9,7 @@ const GET_FOOD_AVG_RATING = "food/GET_FOOD_AVG_RATING";
 const GET_FOOD_ORDERS = "food/GET_FOOD_ORDERS";
 const GET_USER_FOOD_ORDERS = "food/GET_USER_FOOD_ORDERS";
 const CREATE_FOOD_ORDER = "food/CREATE_FOOD_ORDER";
+const DELETE_FOOD_ORDER = "food/DELETE_FOOD_ORDER";
 const REMOVE_FOOD_FROM_ORDER = "food/REMOVE_FOOD_FROM_ORDER";
 
 export const getAllFoods = (foods) => {
@@ -73,7 +74,7 @@ export const createFoodOrder = (food) => {
     }
 }
 
-export const removeFoodFromOrder = (food) => {
+export const deleteFoodOrder = (food) => {
     return {
         type: REMOVE_FOOD_FROM_ORDER,
         payload: food
@@ -192,9 +193,29 @@ export const createFoodOrderThunk = (food_order, user_id) => async (dispatch) =>
         }
         throw error;
     }
-
 };
 
+export const deleteFoodOrderThunk = (food_order, user_id) => async (dispatch) => {
+    try {
+        const response = await csrfFetch(`/api/users/${user_id}/foodorders/${food_order.id}`, {
+            method: "DELETE"
+        });
+
+        if (response.ok) {
+            const deletedOrder = await response.json();
+            dispatch(deleteFoodOrder(deletedOrder));
+            return deletedOrder;
+        }
+
+    } catch (error) {
+        console.error("Error deleting food order:", error);
+        if (error.response) {
+            const errorData = await error.response.json();
+            console.error("Server error data:", errorData);
+        }
+        throw error;
+    }
+}
 const initialState = {
     allFoods: {},
     food: {},
@@ -235,6 +256,9 @@ export default function foodReducer(state = initialState, action) {
             return newState
         case CREATE_FOOD_ORDER:
             newState.currentFoodOrders[action.payload.id] = action.payload;
+            return newState
+        case DELETE_FOOD_ORDER:
+            delete newState.currentFoodOrders[action.payload.id];
             return newState
         default:
             return state
