@@ -5,9 +5,9 @@ import * as sessionActions from "../../store/session";
 import * as foodActions from "../../store/food";
 function DeleteFoodOrderModal({ isOpen, onClose, foodOrder }) {
     const dispatch = useDispatch();
-    const history = useHistory();
     console.log('inside modal', foodOrder, foodOrder.id)
-    // const userFoodOrders = useSelector(state => sessionActions.getUserFoodOrders(user.id));
+    const user_id = useSelector(state => state.session.user?.id);
+
     useEffect(() => {
         dispatch(sessionActions.getUserFoodOrdersThunk(foodOrder.user_id));
 
@@ -15,7 +15,9 @@ function DeleteFoodOrderModal({ isOpen, onClose, foodOrder }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        dispatch(foodActions.deleteFoodOrderThunk(foodOrder.id));
+        console.log('inside handleSubmit', user_id, foodOrder.id);
+        dispatch(foodActions.deleteFoodOrderThunk(user_id, foodOrder.id));
+        onClose();
     }
 
     return (
