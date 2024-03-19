@@ -195,15 +195,16 @@ export const createFoodOrderThunk = (food_order, user_id) => async (dispatch) =>
     }
 };
 
-export const deleteFoodOrderThunk = (food_order, user_id) => async (dispatch) => {
+export const deleteFoodOrderThunk = (user_id, food_order_id) => async (dispatch) => {
     try {
-        const response = await csrfFetch(`/api/users/${user_id}/foodorders/${food_order.id}`, {
+        const response = await csrfFetch(`/api/users/${user_id}/foodorders/${food_order_id}`, {
             method: "DELETE"
         });
 
         if (response.ok) {
             const deletedOrder = await response.json();
             dispatch(deleteFoodOrder(deletedOrder));
+            console.log('inside thunk', deletedOrder);
             return deletedOrder;
         }
 
@@ -258,6 +259,7 @@ export default function foodReducer(state = initialState, action) {
             newState.currentFoodOrders[action.payload.id] = action.payload;
             return newState
         case DELETE_FOOD_ORDER:
+            console.log('inside delete food order', action.payload);
             delete newState.currentFoodOrders[action.payload.id];
             return newState
         default:
