@@ -13,4 +13,8 @@ def get_food_orders():
 @food_order_routes.route('/<int:id>')
 def get_food_order(id):
     food_order = FoodOrder.query.get(id)
+    print('food_order', food_order, food_order.to_dict())
+    if food_order is None:
+        return jsonify({'error': 'Food order not found'}), 404
+
     return {'food_order': food_order.to_dict()}
