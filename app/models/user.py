@@ -11,9 +11,9 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(40), nullable=False, unique=True)
     email = db.Column(db.String(255), nullable=False, unique=True)
-    first_name = db.Column(db.String(255), nullable=False)
-    last_name = db.Column(db.String(255), nullable=False)
-    isAdmin = db.Column(db.Boolean, nullable=False, default=False)
+    first_name = db.Column(db.String(255), nullable=True)
+    last_name = db.Column(db.String(255), nullable=True)
+    isAdmin = db.Column(db.Boolean, nullable=True, default=False)
     hashed_password = db.Column(db.String(255), nullable=False)
 
     sent_messages = db.relationship('Message', back_populates='sender', cascade='all, delete-orphan', lazy=True, foreign_keys='Message.sender_id')
