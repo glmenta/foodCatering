@@ -88,10 +88,11 @@ class FoodOrder(db.Model):
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
     food = db.relationship('Food', back_populates='food_orders')
-    orders = db.relationship('Order', back_populates='food_orders')
+    orders = db.relationship('Order', back_populates='food_orders', cascade="all, delete")
     food_menu = db.relationship('FoodMenu', back_populates='food_orders')
 
     def to_dict(self):
+
         return {
             'id': self.id,
             'user_id': self.user_id,
