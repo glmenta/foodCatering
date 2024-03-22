@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, IntegerField
 from wtforms.validators import DataRequired, ValidationError, NumberRange
 from app.models.order import Order
-from app.models.day import Day
+# from app.models.day import Day
 from app.models.foodinfo import FoodOrder, Food, FoodMenu, food_menu_foods
 
 # order form needs: order name, choice of food in order and quantity, submit

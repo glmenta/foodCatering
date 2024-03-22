@@ -4,7 +4,7 @@ from .orders import seed_orders, undo_orders
 from .food_orders import seed_foods, undo_foods, seed_food_orders, undo_food_orders, seed_food_menus, undo_food_menus
 from .food_images import seed_food_images, undo_food_images
 from .reviews import seed_reviews, undo_reviews
-from .days import seed_days, undo_days
+# from .days import seed_days, undo_days
 from app.models.db import db, environment, SCHEMA
 
 # Creates a seed group to hold our commands
@@ -17,7 +17,7 @@ seed_commands = AppGroup('seed')
 def seed():
     if environment == 'production':
         db.session.execute(f'TRUNCATE table {SCHEMA}.users RESTART IDENTITY CASCADE;')
-        db.session.execute(f'TRUNCATE table {SCHEMA}.days RESTART IDENTITY CASCADE;')
+        # db.session.execute(f'TRUNCATE table {SCHEMA}.days RESTART IDENTITY CASCADE;')
         db.session.execute(f'TRUNCATE table {SCHEMA}.foods RESTART IDENTITY CASCADE;')
         db.session.execute(f'TRUNCATE table {SCHEMA}.food_orders RESTART IDENTITY CASCADE;')
         # db.session.execute(f'TRUNCATE table {SCHEMA}.food_menus RESTART IDENTITY CASCADE;')
@@ -26,7 +26,7 @@ def seed():
         db.session.execute(f'TRUNCATE table {SCHEMA}.orders RESTART IDENTITY CASCADE;')
         undo_users()
     seed_users()
-    seed_days()
+    # seed_days()
     seed_foods()
     # seed_food_menus()
     seed_orders()
@@ -40,7 +40,7 @@ def seed():
 @seed_commands.command('undo')
 def undo():
     undo_users()
-    undo_days()
+    # undo_days()
     # undo_food_menus()
     undo_orders()
     undo_food_orders()
