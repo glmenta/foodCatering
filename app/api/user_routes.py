@@ -74,30 +74,40 @@ def create_food_order(id):
 
     foodorder_data = request.get_json()
 
-    form = FoodOrderForm(food_menu_id=foodorder_data.get('menu_id'), foodorder_data=foodorder_data)
-    form['csrf_token'].data = request.cookies['csrf_token']
+    if not foodorder_data:
+        return jsonify({'error': 'Invalid JSON data provided'}), 400
 
-    print('Request Data:', request.get_json())
-    print('Available Choices:', form.food.choices)
+    form = FoodOrderForm(food_menu_id=foodorder_data.get('menu_id'), foodorder_data=foodorder_data)
+    form['csrf_token'].data = request.cookies.get('csrf_token')
+
+    # Populate choices for the food field
+    form.food.choices = [(food.id, food.name) for food in Food.query.all()]
+
     if form.validate():
-        # Retrieve the selected food and quantity from the form
+        # Retrieve selected food ID and quantity from the form
         selected_food_id = form.food.data
         quantity = form.quantity.data
+
+        # Retrieve the selected food instance
+        selected_food = Food.query.get(selected_food_id)
+
+        if not selected_food:
+            return jsonify({'error': 'Selected food not found'}), 404
 
         # Create a new FoodOrder instance
         new_food_order = FoodOrder(
             food_id=selected_food_id,
             user_id=user.id,
-            menu_id=foodorder_data.get('menu_id'),
-            order_id=None,  # Since there's no order_id yet
             quantity=quantity
         )
 
         db.session.add(new_food_order)
         db.session.commit()
+
         return jsonify({'message': 'Food order created successfully', 'food_order': new_food_order.to_dict()}), 201
     else:
         return jsonify({'error': 'Form validation failed', 'errors': form.errors}), 400
+
 
 @user_routes.route('/<int:user_id>/foodorders/<int:id>', methods=['DELETE'])
 @login_required

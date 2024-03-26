@@ -17,7 +17,6 @@ seed_commands = AppGroup('seed')
 def seed():
     if environment == 'production':
         db.session.execute(f'TRUNCATE table {SCHEMA}.users RESTART IDENTITY CASCADE;')
-        # db.session.execute(f'TRUNCATE table {SCHEMA}.days RESTART IDENTITY CASCADE;')
         db.session.execute(f'TRUNCATE table {SCHEMA}.foods RESTART IDENTITY CASCADE;')
         db.session.execute(f'TRUNCATE table {SCHEMA}.food_orders RESTART IDENTITY CASCADE;')
         # db.session.execute(f'TRUNCATE table {SCHEMA}.food_menus RESTART IDENTITY CASCADE;')
@@ -26,7 +25,6 @@ def seed():
         db.session.execute(f'TRUNCATE table {SCHEMA}.orders RESTART IDENTITY CASCADE;')
         undo_users()
     seed_users()
-    # seed_days()
     seed_foods()
     # seed_food_menus()
     seed_orders()
@@ -40,7 +38,6 @@ def seed():
 @seed_commands.command('undo')
 def undo():
     undo_users()
-    # undo_days()
     # undo_food_menus()
     undo_orders()
     undo_food_orders()
