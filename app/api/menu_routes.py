@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, current_app
-from app.models.foodinfo import FoodMenu, Food, food_menu_foods
+from app.models.foodinfo import FoodMenu, Food
 from app.models.user import User
 from flask_login import login_required, current_user
 # from app.models.day import Day
