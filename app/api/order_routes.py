@@ -50,7 +50,7 @@ def create_order():
         )
         db.session.add(order)
         db.session.commit()
-        return {'order': order.to_dict()}
+        return {'order': order.to_dict()}, 201
     else:
         return jsonify(errors=order_form.errors), 400
 
@@ -83,8 +83,7 @@ def add_food_to_order(order_id, food_order_id):
         food_order.quantity += quantity
     else:
         # Create a new food_order and associate it with the order
-        new_food_order = FoodOrder(user_id=user_id, order_id=order_id, food=food_order.food, quantity=quantity)
-        order.food_orders.append(new_food_order)
+        order.food_orders.append(food_order)
 
     db.session.commit()
 
@@ -93,7 +92,7 @@ def add_food_to_order(order_id, food_order_id):
 
 
 
-@order_routes.route('/<int:order_id>/delete/<int:food_order_id>', methods=['PATCH'])
+@order_routes.route('/<int:order_id>/delete/<int:food_order_id>', methods=['DELETE'])
 @login_required
 def remove_food_order_from_order(order_id, food_order_id):
     user_id = current_user.id
@@ -107,27 +106,10 @@ def remove_food_order_from_order(order_id, food_order_id):
     if food_order is None or food_order.order_id != order_id:
         return jsonify({'error': 'Food order not found in the specified order'}), 404
 
-    data = request.get_json()
-    quantity_from_data = data.get('quantity', 1)
-
-    if quantity_from_data <= 0 or not isinstance(quantity_from_data, int):
-        return jsonify({'error': 'Invalid quantity value'}), 400
-
     # Retrieve the list of food orders from the order
     food_orders = order.food_orders
 
-    # Iterate over the food orders to find and remove the specified food order
-    for order in food_orders:
-        if order.id == food_order_id:
-            if quantity_from_data >= order.quantity:
-                # Reset the food order's order_id to None
-                order.order_id = None
-                # Remove the food order from the list of food orders
-                order.quantity = 0
-            else:
-                # Update the quantity of the food order
-                order.quantity -= quantity_from_data
-            break
+    order.food_orders = [order for order in order.food_orders if order.id != food_order_id]
 
     db.session.commit()
 
