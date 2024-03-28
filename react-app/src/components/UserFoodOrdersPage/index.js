@@ -129,7 +129,7 @@ const UserFoodOrdersPage = () => {
 
             {createOrderModalOpen && (
                 <div className='create-order-modal'>
-                    <CreateOrderModal isOpen={createOrderModalOpen} onClose={closeCreateFoodOrderModal} />
+                    <CreateOrderModal isOpen={createOrderModalOpen} onClose={closeCreateFoodOrderModal} food_order={selectedFoodOrder} user_id ={user_id}/>
                 </div>
             )}
 

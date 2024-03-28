@@ -100,12 +100,13 @@ function HomePage() {
                     </div>
                 ) : (
                     <div>
-                        <h2>No menu for today! Please check again later.</h2>
+                        <h2>No menu for today! Feel free to check out the foods section!</h2>
                         {user && user.isAdmin && (
                             <div className='set-current-menu-modal'>
                                 <button onClick={openMenuModal}>Set Current Menu</button>
                             </div>
                         )}
+
                         {isMenuModalOpen && <SetMenuModal menus={menus} currMenuId={currentMenu.id} onClose={closeMenuModal}/>}
                     </div>
 

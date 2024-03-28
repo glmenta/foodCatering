@@ -24,7 +24,6 @@ function SetMenuModal({menus, currMenuId, onClose}) {
                     {menus.map(menu => (
                         <div className='curr-menu-tiles' key={menu.id}>
                             <h3>Menu ID: {menu.id}</h3>
-                            <h3>{menu.day.day}</h3>
                             <div className='menu-foods'>
                                 {menu?.foods?.length > 0 ? (
                                     menu.foods.map(food => (

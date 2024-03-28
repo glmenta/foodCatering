@@ -95,7 +95,7 @@ class FoodOrder(db.Model):
             'id': self.id,
             'user_id': self.user_id,
             'order_id': self.order_id,
-            'food_id': self.food_id,
+            # 'food_id': self.food_id,
             'quantity': self.quantity,
             'food': self.food.to_dict(),
             'created_at': self.created_at,

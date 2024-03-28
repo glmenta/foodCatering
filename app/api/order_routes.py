@@ -50,7 +50,7 @@ def create_order():
         )
         db.session.add(order)
         db.session.commit()
-        return {'order': order.to_dict()}
+        return {'order': order.to_dict()}, 201
     else:
         return jsonify(errors=order_form.errors), 400
 
@@ -83,8 +83,7 @@ def add_food_to_order(order_id, food_order_id):
         food_order.quantity += quantity
     else:
         # Create a new food_order and associate it with the order
-        new_food_order = FoodOrder(user_id=user_id, order_id=order_id, food=food_order.food, quantity=quantity)
-        order.food_orders.append(new_food_order)
+        order.food_orders.append(food_order)
 
     db.session.commit()
 

@@ -86,7 +86,7 @@ export const getUserOrdersThunk = (userId) => async (dispatch) => {
 }
 
 export const createOrderThunk = (order) => async (dispatch) => {
-    const response = await csrfFetch("/api/orders", {
+    const response = await csrfFetch("/api/orders/new", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -94,11 +94,14 @@ export const createOrderThunk = (order) => async (dispatch) => {
         body: JSON.stringify(order),
     });
     if (response.ok) {
-        const newOrder = await response.json();
-        dispatch(createOrder(newOrder));
-        return newOrder
+        const data = await response.json();
+        console.log('data inside thunk: ', data)
+        dispatch(createOrder(data));
+        return data;
     }
-}
+};
+
+
 
 export const updateOrderThunk = (order) => async (dispatch) => {
     const response = await csrfFetch(`/api/orders/${order.id}`, {
@@ -127,7 +130,7 @@ export const deleteOrderThunk = (orderId) => async (dispatch) => {
 }
 
 export const addFoodToOrderThunk = (food, orderId) => async (dispatch) => {
-    console.log(orderId, food);
+    console.log('inside addFoodToOrderThunk', orderId, food);
     const response = await csrfFetch(`/api/orders/${orderId}/add/${food.food_id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -188,7 +191,8 @@ export default function orderReducer(state = initialState, action) {
             newState.order = action.payload;
             return newState
         case CREATE_ORDER:
-            newState.order = action.payload;
+            console.log('payload', action.payload)
+            newState.allOrders.push(action.payload.order)
             return newState
         case UPDATE_ORDER:
             newState.order = action.payload;
