@@ -129,14 +129,18 @@ export const deleteOrderThunk = (orderId) => async (dispatch) => {
     }
 }
 
-export const addFoodToOrderThunk = (orderId, foodOrderId) => async (dispatch) => {
+export const addFoodToOrderThunk = (orderId, foodOrderId, quantity) => async (dispatch) => {
     console.log('inside addFoodToOrderThunk', orderId, foodOrderId);
     const response = await csrfFetch(`/api/orders/${orderId}/add/${foodOrderId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(quantity)
     });
     if (response.ok) {
         console.log('response: ', response)
+        const newFood = await response.json();
+        dispatch(addFoodToOrder(newFood, orderId));
+        return newFood
     }
 }
 
