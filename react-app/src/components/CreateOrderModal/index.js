@@ -13,8 +13,8 @@ function CreateOrderModal({ isOpen, onClose, food_order, user_id }) {
     const [orderName, setOrderName] = useState('');
 
     console.log('inside modal food_order', food_order)
-    let orderId = food_order.food_id
-    console.log ('food_order id: ', orderId)
+    let foodOrderId = food_order.id
+    console.log ('food_order id: ', foodOrderId)
     const handleSubmit = async (e) => {
         e.preventDefault();
         setErrors([]);
@@ -33,13 +33,13 @@ function CreateOrderModal({ isOpen, onClose, food_order, user_id }) {
 
             if (orderResponse && orderResponse.order && orderResponse.order.id) {
                 const orderId = orderResponse.order.id;
-                console.log('Order ID:', orderId);
+                console.log('Order ID:', orderId, 'food_order.id', food_order.id);
 
                 const foodPayload = {
                     quantity: food_order.quantity
                 };
 
-                const addFoodResponse = await dispatch(orderActions.addFoodToOrderThunk(foodPayload, food_order.id));
+                const addFoodResponse = await dispatch(orderActions.addFoodToOrderThunk(orderId, foodOrderId));
                 console.log('Add Food Response:', addFoodResponse);
 
                 if (addFoodResponse.success) {

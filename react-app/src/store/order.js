@@ -129,17 +129,14 @@ export const deleteOrderThunk = (orderId) => async (dispatch) => {
     }
 }
 
-export const addFoodToOrderThunk = (food, orderId) => async (dispatch) => {
-    console.log('inside addFoodToOrderThunk', orderId, food);
-    const response = await csrfFetch(`/api/orders/${orderId}/add/${food.food_id}`, {
+export const addFoodToOrderThunk = (orderId, foodOrderId) => async (dispatch) => {
+    console.log('inside addFoodToOrderThunk', orderId, foodOrderId);
+    const response = await csrfFetch(`/api/orders/${orderId}/add/${foodOrderId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(food)
     });
     if (response.ok) {
-        const newFood = await response.json();
-        dispatch(addFoodToOrder(newFood, orderId));
-        return newFood
+        console.log('response: ', response)
     }
 }
 
@@ -150,9 +147,7 @@ export const removeFoodFromOrderThunk = (food, orderId) => async (dispatch) => {
         body: JSON.stringify(food)
     });
     if (response.ok) {
-        const newFood = await response.json();
-        dispatch(removeFoodFromOrder(newFood, orderId));
-        return newFood
+        console.log('response: ', response)
     }
 }
 
