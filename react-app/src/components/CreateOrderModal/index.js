@@ -39,7 +39,7 @@ function CreateOrderModal({ isOpen, onClose, food_order, user_id }) {
                     quantity: food_order.quantity
                 };
 
-                const addFoodResponse = await dispatch(orderActions.addFoodToOrderThunk(orderId, foodOrderId));
+                const addFoodResponse = await dispatch(orderActions.addFoodToOrderThunk(orderId, foodOrderId, foodPayload));
                 console.log('Add Food Response:', addFoodResponse);
 
                 if (addFoodResponse.success) {
