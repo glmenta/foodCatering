@@ -134,7 +134,7 @@ export const addFoodToOrderThunk = (orderId, foodOrderId, quantity) => async (di
     const response = await csrfFetch(`/api/orders/${orderId}/add/${foodOrderId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(quantity)
+        body: JSON.stringify({quantity})
     });
     if (response.ok) {
         console.log('response: ', response)

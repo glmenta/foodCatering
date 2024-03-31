@@ -85,8 +85,8 @@ const UserFoodOrdersPage = () => {
             food_id: selectedFoodOrder.food.id,
             quantity: selectedFoodOrder.quantity
         };
-        console.log('inside handleAddToOrder', food);
-        await dispatch(orderActions.addFoodToOrderThunk(food, selectedOrderId));
+        console.log('inside handleAddToOrder test: ', food.food_id, selectedOrderId);
+        await dispatch(orderActions.addFoodToOrderThunk(selectedOrderId, food.food_id, food.quantity));
         setPopupOpen(false);
         setAddedFoodOrderIds(prevIds => [...prevIds, selectedFoodOrder.id]);
     };
