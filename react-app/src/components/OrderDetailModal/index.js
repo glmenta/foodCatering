@@ -25,9 +25,14 @@ function OrderDetailModal({ isOpen, onClose, orderId, orderMessages }) {
         console.log('newQuantity: ', newQuantity);
         setQuantityUpdates({ ...quantityUpdates, [foodOrderId]: newQuantity });
 
-        console.log('inside updateQuantity', orderId, foodOrderId);
+        console.log('inside updateQuantity', orderId, foodOrderId, newQuantity);
         if (newQuantity === 0 && foodOrderId) {
-            dispatch(orderActions.updateFoodOrderQuantitiesThunk(orderId, foodOrderId));
+            dispatch(orderActions.removeFoodFromOrderThunk(orderId, foodOrderId));
+            setShowConfirmation(false);
+            setSelectedFoodOrder(null);
+        } else {
+            console.log('inside else', orderId, foodOrderId, newQuantity);
+            dispatch(orderActions.updateFoodOrderQuantitiesThunk(orderId, foodOrderId, newQuantity));
             setShowConfirmation(true);
         }
     };

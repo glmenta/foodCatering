@@ -134,7 +134,7 @@ export const addFoodToOrderThunk = (orderId, foodOrderId, quantity) => async (di
     const response = await csrfFetch(`/api/orders/${orderId}/add/${foodOrderId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(quantity)
+        body: JSON.stringify({quantity})
     });
     if (response.ok) {
         console.log('response: ', response)
@@ -151,20 +151,23 @@ export const removeFoodFromOrderThunk = (food, orderId) => async (dispatch) => {
         body: JSON.stringify(food)
     });
     if (response.ok) {
-        console.log('response: ', response)
+        const deletedFood = await response.json();
+        dispatch(removeFoodFromOrder(deletedFood, orderId));
+        return deletedFood
     }
 }
 
-export const updateFoodOrderQuantitiesThunk = (food, orderId) => async (dispatch) => {
-    const response = await csrfFetch(`/api/orders/${orderId}/update/${food.id}`, {
+export const updateFoodOrderQuantitiesThunk = (orderId, foodOrderId, quantity) => async (dispatch) => {
+    console.log('inside thunk: ', orderId, foodOrderId, quantity);
+    const response = await csrfFetch(`/api/orders/${orderId}/update/${foodOrderId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(food)
+        body: JSON.stringify({quantity})
     });
     if (response.ok) {
-        const newFood = await response.json();
-        dispatch(updateFoodOrderQuantities(newFood, orderId));
-        return newFood
+        const updatedFood = await response.json();
+        dispatch(updateFoodOrderQuantities(orderId, foodOrderId, quantity));
+        return updatedFood
     }
 }
 
