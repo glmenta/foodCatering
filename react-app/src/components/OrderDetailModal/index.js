@@ -27,18 +27,19 @@ function OrderDetailModal({ isOpen, onClose, orderId, orderMessages }) {
 
         console.log('inside updateQuantity', orderId, foodOrderId, newQuantity);
         if (newQuantity === 0 && foodOrderId) {
-            dispatch(orderActions.removeFoodFromOrderThunk(orderId, foodOrderId));
-            setShowConfirmation(false);
-            setSelectedFoodOrder(null);
+            setShowConfirmation(true);
+            setSelectedFoodOrder(foodOrderId);
         } else {
             console.log('inside else', orderId, foodOrderId, newQuantity);
             dispatch(orderActions.updateFoodOrderQuantitiesThunk(orderId, foodOrderId, newQuantity));
-            setShowConfirmation(true);
+
+            setShowConfirmation(false);
+            setSelectedFoodOrder(null);
         }
     };
 
     const removeFoodOrder = () => {
-        dispatch(orderActions.removeFoodFromOrderThunk(orderId, selectedFoodOrder));
+        dispatch(orderActions.removeFoodOrderFromOrderThunk(selectedFoodOrder, orderId));
         setShowConfirmation(false);
         setSelectedFoodOrder(null);
     };

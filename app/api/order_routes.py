@@ -106,9 +106,6 @@ def remove_food_order_from_order(order_id, food_order_id):
     if food_order is None or food_order.order_id != order_id:
         return jsonify({'error': 'Food order not found in the specified order'}), 404
 
-    # Retrieve the list of food orders from the order
-    food_orders = order.food_orders
-
     order.food_orders = [order for order in order.food_orders if order.id != food_order_id]
 
     db.session.commit()
