@@ -51,19 +51,29 @@ function OrderPage() {
         setOrderId(null)
     }
 
+    const navigateToMenu = () => {
+        history.push('/')
+    }
     return (
         <div className='order-page-container'>
             <h1>Order Page</h1>
             <div className='user-orders'>
-                {isLoaded && orders.map(order => (
-                    <div className='order-card' key={order?.id} onClick={() => openOrderModal(order?.id)}>
-                        <div>{order?.id}</div>
-                        <div>{order?.order_name}</div>
-                        <div>{order?.createdAt}</div>
+                {isLoaded && orders.length ? (
+                    orders.map(order => (
+                        <div className='order-card' key={order?.id} onClick={() => openOrderModal(order?.id)}>
+                            <div>{order?.id}</div>
+                            <div>{order?.order_name}</div>
+                            <div>{order?.createdAt}</div>
+                        </div>
+                    ))
+                ) : (
+                    <div>
+                        <p>There are currently no orders! Would you like to make a new order?</p>
+                        <button onClick={navigateToMenu}>View Menu</button>
                     </div>
-                ))}
-            {isOrderModalOpen && <OrderDetailModal isOpen={isOrderModalOpen} onClose={closeOrderModal} orderId={orderId} orderMessages={orderMessages[orderId]} />}
+                )}
             </div>
+            {isOrderModalOpen && <OrderDetailModal isOpen={isOrderModalOpen} onClose={closeOrderModal} orderId={orderId} orderMessages={orderMessages[orderId]} />}
         </div>
     )
 }
