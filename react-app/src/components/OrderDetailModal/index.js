@@ -48,6 +48,10 @@ function OrderDetailModal({ isOpen, onClose, orderId, orderMessages }) {
         setQuantityUpdates({});
     };
 
+    const deleteSelectedOrder = (orderId) => {
+        dispatch(orderActions.deleteOrderThunk(orderId));
+        onClose();
+    }
     const totalPrice = order ? order.foodOrders.reduce((acc, foodOrder) => {
         const updatedQuantity = quantityUpdates[foodOrder.id] || foodOrder.quantity;
         return acc + (updatedQuantity * foodOrder.food.price);
@@ -85,7 +89,8 @@ function OrderDetailModal({ isOpen, onClose, orderId, orderMessages }) {
                     ))}
                 </div>
                 <div>Total Price: ${totalPrice.toFixed(2)}</div>
-                <button onClick={onClose}>X</button>
+                <button onClick={() => deleteSelectedOrder(orderId)}>Delete Order</button>
+                <button onClick={onClose}>Back to Orders</button>
             </div>
         </div>
     );

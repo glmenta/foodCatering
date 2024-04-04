@@ -119,7 +119,8 @@ export const updateOrderThunk = (order) => async (dispatch) => {
 }
 
 export const deleteOrderThunk = (orderId) => async (dispatch) => {
-    const response = await csrfFetch(`/api/orders/${orderId}`, {
+    console.log('inside delete order thunk: ', orderId);
+    const response = await csrfFetch(`/api/orders/${orderId}/delete`, {
         method: "DELETE",
     });
     if (response.ok) {

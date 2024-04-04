@@ -136,3 +136,17 @@ def update_food_order_quantity(order_id, food_order_id):
     db.session.commit()
 
     return jsonify({'message': 'Food order quantity updated successfully', 'order': order.to_dict()}), 200
+
+@order_routes.route('/<int:order_id>/delete', methods=['DELETE'])
+@login_required
+def delete_order(order_id):
+    user_id = current_user.id
+    order = Order.query.get(order_id)
+
+    if order is None or order.user_id != user_id:
+        return jsonify({'error': 'Order not found or does not belong to the current user'}), 404
+
+    db.session.delete(order)
+    db.session.commit()
+
+    return jsonify({'message': 'Order deleted successfully', 'order': order.to_dict()}), 200
