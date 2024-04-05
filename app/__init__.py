@@ -15,8 +15,10 @@ from .api.food_orders_routes import food_order_routes
 from .api.message_routes import message_routes
 from .seeds import seed_commands
 from .config import Config
+# from .socketio import socketio
 
 app = Flask(__name__, static_folder='../react-app/build', static_url_path='/')
+# socketio.init_app(app)
 
 app.config['CURRENT_MENU_ID'] = None
 
