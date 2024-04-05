@@ -56,6 +56,8 @@ def send_message_to_customer(order_id):
         db.session.add(message)
         try:
             db.session.commit()
+            # socketio.emit('customer_message', {'message': 'New message from admin', 'sent_message': message.to_dict()}, room=order.user_id)
+
             return jsonify({'message': 'Message sent to customer!', 'sent_message': message.to_dict(), 'order': order.to_dict()}), 200
         except Exception as e:
             db.session.rollback()
@@ -111,7 +113,7 @@ def delete_message(message_id):
     if user.id != message.sender_id:
         return jsonify({'error': 'You do not have permission to delete this message'}), 401
 
-    print('Before deletion:', message.to_dict())  # Debugging output
+    print('Before deletion:', message.to_dict())
     try:
         db.session.delete(message)
         db.session.commit()
