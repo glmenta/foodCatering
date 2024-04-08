@@ -109,6 +109,24 @@ export const setCurrentMenuThunk = (menuId) => async (dispatch) => {
     }
 }
 
+export const createMenuThunk = (menu) => async (dispatch) => {
+    console.log('inside createMenuThunk', menu);
+    try {
+        const response = await csrfFetch(`/api/menus/new`, {
+            method: "POST",
+            body: JSON.stringify(menu),
+        });
+        if (!response.ok) {
+            throw new Error('Failed to create menu');
+        }
+        const newMenu = await response.json();
+        dispatch(createMenu(newMenu));
+        return newMenu;
+    } catch (error) {
+        console.error('Error creating menu:', error);
+    }
+}
+
 let initialState = {
     menus: {},
     menu: {},
@@ -139,10 +157,8 @@ export default function menuReducer(state = initialState, action) {
                 currentMenu: action.payload
             };
         case CREATE_MENU:
-            return {
-                ...state,
-                menu: action.payload
-            };
+            newState.menus[action.payload.menu.id] = action.payload.menu
+            return newState
         case UPDATE_MENU:
             return {
                 ...state,

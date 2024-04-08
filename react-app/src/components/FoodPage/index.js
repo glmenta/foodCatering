@@ -5,6 +5,8 @@ import * as sessionActions from "../../store/session";
 import * as foodActions from "../../store/food";
 import * as menuActions from "../../store/menu";
 import FoodDetailModal from "../FoodDetailModal";
+
+
 import './foodpage.css'
 
 function FoodPage() {
@@ -15,6 +17,7 @@ function FoodPage() {
     const [isLoaded, setIsLoaded] = useState(false)
     const [isFoodModalOpen, setIsFoodModalOpen] = useState(false)
     const [foodId, setFoodId] = useState(null)
+
 
     useEffect(() => {
         setIsLoaded(false)
