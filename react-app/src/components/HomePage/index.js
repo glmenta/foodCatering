@@ -5,6 +5,7 @@ import * as foodActions from "../../store/food";
 import * as menuActions from "../../store/menu";
 import SetMenuModal from "../SetMenuModal";
 import CreateFoodOrderModal from "../CreateFoodOrderModal";
+import { CreateMenuModal } from "../CreateMenuModal";
 import './homepage.css'
 
 function HomePage() {
@@ -17,6 +18,8 @@ function HomePage() {
     const [isLoaded, setIsLoaded] = useState(false)
     const [isMenuModalOpen, setIsMenuModalOpen] = useState(false)
     const [isCreateFoodOrderModalOpen, setIsCreateFoodOrderModalOpen] = useState(false)
+    const [isCreateMenuModalOpen, setIsCreateMenuModalOpen] = useState(false)
+    const userAdminCheck = useSelector(state => state.session.user?.isAdmin)
     const [foodId, setFoodId] = useState(null)
     const [food, setFood] = useState(null)
 
@@ -78,6 +81,11 @@ function HomePage() {
             <div className='food-button'>
                 <button onClick={navigateToFoodPage}>View All Foods</button>
             </div>
+            <div>
+            {userAdminCheck &&
+                <button onClick={() => setIsCreateMenuModalOpen(true)}>Create Menu</button>
+            }
+            </div>
             <div className='current-menu-container'>
                 {isLoaded && Object.keys(currentMenu).length > 0 ? (
                     <div className='current-menu'>
@@ -112,6 +120,7 @@ function HomePage() {
 
                 )}
                 {user && isCreateFoodOrderModalOpen && <CreateFoodOrderModal user_id ={user?.id} food={food} menu_id={currentMenu?.current_menu?.id} isOpen={isCreateFoodOrderModalOpen} onClose={closeCreateFoodOrderModal}/>}
+                {userAdminCheck && isCreateMenuModalOpen && <CreateMenuModal isOpen={isCreateMenuModalOpen} onClose={() => setIsCreateMenuModalOpen(false)}/>}
             </div>
         </div>
     )
