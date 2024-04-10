@@ -24,11 +24,14 @@ function SetMenuModal({menus, currMenuId, onClose}) {
                     {menus.map(menu => (
                         <div className='curr-menu-tiles' key={menu.id}>
                             <h3>Menu ID: {menu.id}</h3>
+                            <h3>Menu Name: {menu.name}</h3>
                             <div className='menu-foods'>
                                 {menu?.foods?.length > 0 ? (
                                     menu.foods.map(food => (
-                                        <div key={food.id}>
-                                            <h4>{food.name}</h4>
+                                        <div>
+                                            <div key={food.id}>
+                                                <h4>{food.name}</h4>
+                                            </div>
                                         </div>
                                     ))
                                 ) : (

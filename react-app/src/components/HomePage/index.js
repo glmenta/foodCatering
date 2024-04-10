@@ -83,7 +83,10 @@ function HomePage() {
             </div>
             <div>
             {userAdminCheck &&
-                <button onClick={() => setIsCreateMenuModalOpen(true)}>Create Menu</button>
+                <div className='admin-buttons'>
+                    <button onClick={() => setIsCreateMenuModalOpen(true)}>Create Menu</button>
+                    <button onClick={openMenuModal}>Change Menu</button>
+                </div>
             }
             </div>
             <div className='current-menu-container'>
