@@ -127,21 +127,21 @@ def remove_food_from_menu(id):
 @menu_routes.route('/set_current_menu/<int:id>', methods=['PATCH'])
 @login_required
 def set_current_menu(id):
-    # day = Day.query.get(id)
     user = current_user
     if user.isAdmin == False:
         return jsonify({'error': 'You must be an admin to edit the menu'}), 401
-    # if day is None:
-    #     return jsonify({'error': 'Day not found'}), 404
 
-    current_menu = FoodMenu.query.filter_by().first()
+    # Check if the requested menu ID is already the current menu
+    if current_app.config.get('CURRENT_MENU_ID') == id:
+        return jsonify({'error': 'This menu is already set as current, please pick another one'}), 400
 
-    if current_menu:
-        current_app.config['CURRENT_MENU_ID'] = current_menu.id
-    else:
+    current_menu = FoodMenu.query.get(id)
+    if not current_menu:
         return jsonify({'error': 'Current menu not found'}), 404
-        # current_menu = FoodMenu(day_id=id, current_menu_id=id)
-        # current_app.config['CURRENT_MENU_ID'] = current_menu.id
+
+    # Update the current menu ID in the configuration
+    current_app.config['CURRENT_MENU_ID'] = current_menu.id
+    db.session.commit()
 
     db.session.commit()
     updated_menu = FoodMenu.query.get(current_menu.id)
