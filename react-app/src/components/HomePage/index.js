@@ -19,6 +19,7 @@ function HomePage() {
     const [isMenuModalOpen, setIsMenuModalOpen] = useState(false)
     const [isCreateFoodOrderModalOpen, setIsCreateFoodOrderModalOpen] = useState(false)
     const [isCreateMenuModalOpen, setIsCreateMenuModalOpen] = useState(false)
+    const [isChangeMenuModalOpen, setIsChangeMenuModalOpen] = useState(false)
     const userAdminCheck = useSelector(state => state.session.user?.isAdmin)
     const [foodId, setFoodId] = useState(null)
     const [food, setFood] = useState(null)
@@ -58,6 +59,7 @@ function HomePage() {
         setIsMenuModalOpen(false)
     }
 
+
     const openCreateFoodOrderModal = (foodId) => {
         setFoodId(foodId);
         const currFood = foods.find(food => food.id === foodId);
@@ -75,6 +77,10 @@ function HomePage() {
         setFood(food)
     }
 
+    const openChangeMenuModal = () => {
+        setIsChangeMenuModalOpen(true)
+
+    }
     return (
         <div>
             <h1>Home Page !</h1>
@@ -85,7 +91,7 @@ function HomePage() {
             {userAdminCheck &&
                 <div className='admin-buttons'>
                     <button onClick={() => setIsCreateMenuModalOpen(true)}>Create Menu</button>
-                    <button onClick={openMenuModal}>Change Menu</button>
+                    <button onClick={openChangeMenuModal}>Change Menu</button>
                 </div>
             }
             </div>
@@ -124,6 +130,7 @@ function HomePage() {
                 )}
                 {user && isCreateFoodOrderModalOpen && <CreateFoodOrderModal user_id ={user?.id} food={food} menu_id={currentMenu?.current_menu?.id} isOpen={isCreateFoodOrderModalOpen} onClose={closeCreateFoodOrderModal}/>}
                 {userAdminCheck && isCreateMenuModalOpen && <CreateMenuModal isOpen={isCreateMenuModalOpen} onClose={() => setIsCreateMenuModalOpen(false)}/>}
+                {userAdminCheck && isChangeMenuModalOpen && <SetMenuModal menus={menus} currMenuId={currentMenu.id} onClose={() => setIsChangeMenuModalOpen(false)}/>}
             </div>
         </div>
     )
