@@ -6,6 +6,7 @@ import * as menuActions from "../../store/menu";
 import SetMenuModal from "../SetMenuModal";
 import CreateFoodOrderModal from "../CreateFoodOrderModal";
 import { CreateMenuModal } from "../CreateMenuModal";
+import ChangeMenuModal from "../ChangeMenuModal";
 import './homepage.css'
 
 function HomePage() {
@@ -130,7 +131,8 @@ function HomePage() {
                 )}
                 {user && isCreateFoodOrderModalOpen && <CreateFoodOrderModal user_id ={user?.id} food={food} menu_id={currentMenu?.current_menu?.id} isOpen={isCreateFoodOrderModalOpen} onClose={closeCreateFoodOrderModal}/>}
                 {userAdminCheck && isCreateMenuModalOpen && <CreateMenuModal isOpen={isCreateMenuModalOpen} onClose={() => setIsCreateMenuModalOpen(false)}/>}
-                {userAdminCheck && isChangeMenuModalOpen && <SetMenuModal menus={menus} currMenuId={currentMenu.id} onClose={() => setIsChangeMenuModalOpen(false)}/>}
+                {userAdminCheck && isChangeMenuModalOpen && <ChangeMenuModal isOpen={isChangeMenuModalOpen} currMenuId={currentMenu.id} onClose={() => setIsChangeMenuModalOpen(false)}/>}
+
             </div>
         </div>
     )
