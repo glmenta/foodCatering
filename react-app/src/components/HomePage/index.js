@@ -34,6 +34,7 @@ function HomePage() {
         dispatch(menuActions.getAllMenusThunk())
     }, [dispatch])
 
+
     useEffect(() => {
         dispatch(menuActions.getCurrentMenuThunk())
     }, [dispatch])
@@ -88,32 +89,37 @@ function HomePage() {
             <div className='food-button'>
                 <button onClick={navigateToFoodPage}>View All Foods</button>
             </div>
-            <div>
-            {userAdminCheck &&
-                <div className='admin-buttons'>
-                    <button onClick={() => setIsCreateMenuModalOpen(true)}>Create Menu</button>
-                    <button onClick={openChangeMenuModal}>Change Menu</button>
-                </div>
-            }
-            </div>
+
             <div className='current-menu-container'>
                 {isLoaded && Object.keys(currentMenu).length > 0 ? (
-                    <div className='current-menu'>
-                        <h2>Current Menu</h2>
-                        <div className='current-menu-contents'>
-                            <ul>
-                                {currentMenu?.current_menu?.foods.map(food => (
-                                    <li key={food.id}>
-                                        <div className='menu-food'>
-                                            <h3 className='menu-food-name'>{food?.name}</h3>
-                                            <p className='menu-food-description'>Description: {food?.description}</p>
-                                            <p className='menu-food-price'>Price: ${food.price}</p>
-                                            {user && <button onClick={() =>openCreateFoodOrderModal(food.id)}>Add to Cart</button>}
-                                            <img src={food?.food_images[0]?.url} alt={food?.name} className='food-img'/>
+                    <div className='current-menu-container'>
+                        <div className='current-menu'>
+                            <h2>Current Menu</h2>
+                            <div className='current-menu-contents'>
+                                <ul>
+                                    {currentMenu?.current_menu?.foods.map(food => (
+                                        <div className='menu-food-container'>
+                                            <li key={food.id} className='menu-food-li'>
+                                                <div className='menu-food'>
+                                                    <h3 className='menu-food-name'>{food?.name}</h3>
+                                                    <img src={food?.food_images[0]?.url} alt={food?.name} className='food-img'/>
+                                                    {/* <p className='menu-food-description'>Description: {food?.description}</p> */}
+                                                    <p className='menu-food-price'>Price: ${food.price}</p>
+                                                    {user && <button onClick={() =>openCreateFoodOrderModal(food.id)}>Add to Cart</button>}
+                                                </div>
+                                            </li>
                                         </div>
-                                    </li>
-                                ))}
-                            </ul>
+                                    ))}
+                                </ul>
+                            </div>
+                            <div className='menu-button'>
+                                {userAdminCheck &&
+                                    <div className='admin-buttons'>
+                                        <button onClick={() => setIsCreateMenuModalOpen(true)}>Create Menu</button>
+                                        <button onClick={openChangeMenuModal}>Change Menu</button>
+                                    </div>
+                                }
+                                </div>
                         </div>
                     </div>
                 ) : (
