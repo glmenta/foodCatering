@@ -6,6 +6,7 @@ import OpenModalButton from "../OpenModalButton";
 import LoginFormModal from "../LoginFormModal";
 import SignupFormModal from "../SignupFormModal";
 import UserFoodOrdersPage from "../UserFoodOrdersPage";
+import './ProfileButton.css'
 
 function ProfileButton({ user }) {
   const dispatch = useDispatch();
@@ -57,32 +58,37 @@ function ProfileButton({ user }) {
   const closeMenu = () => setShowMenu(false);
 
   return (
-    <>
+    <div className="profile-button-container">
       <button onClick={openMenu}>
         <i className="fas fa-user-circle" />
       </button>
       <ul className={ulClassName} ref={ulRef}>
         {user ? (
-          <>
-            <li>{user.username}</li>
-            <li>{user.email}</li>
-            <li>
-              <button onClick={handleLogout}>Log Out</button>
-            </li>
-            <div>
-              <button onClick={handleOrderButton}>View Orders</button>
-            </div>
-            <div>
-              <button onClick={handleCartButton}>View Cart</button>
-            </div>
-            {user?.isAdmin && (
+          <div className="profile-dropdown">
+            <div className="profile-dropdown-content">
               <div>
-                <button onClick={handleCreateFood}>Create Food</button>
+              <li className="profile-username">{user.username}</li>
+              <li className="profile-email">{user.email}</li>
+              <li className="profile-logout"><button onClick={handleLogout}>Log Out</button>
+              </li>
+            </div>
+            <div className="profile-dropdown-buttons">
+              <div className="view-orders-button">
+                <button onClick={handleOrderButton}>View Orders</button>
               </div>
-            )}
-          </>
+              <div className="view-cart-button">
+                <button onClick={handleCartButton}>View Cart</button>
+              </div>
+              {user?.isAdmin && (
+                <div className="create-food-button">
+                  <button onClick={handleCreateFood}>Create Food</button>
+                </div>
+              )}
+            </div>
+            </div>
+          </div>
         ) : (
-          <>
+          <div>
             <OpenModalButton
               buttonText="Log In"
               onItemClick={closeMenu}
@@ -94,10 +100,10 @@ function ProfileButton({ user }) {
               onItemClick={closeMenu}
               modalComponent={<SignupFormModal />}
             />
-          </>
+          </div>
         )}
       </ul>
-    </>
+    </div>
   );
 }
 
