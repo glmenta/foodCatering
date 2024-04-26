@@ -7,6 +7,7 @@ import SetMenuModal from "../SetMenuModal";
 import CreateFoodOrderModal from "../CreateFoodOrderModal";
 import { CreateMenuModal } from "../CreateMenuModal";
 import ChangeMenuModal from "../ChangeMenuModal";
+import FoodManagementModal from "../ModifyFoodMenu";
 import './homepage.css'
 
 function HomePage() {
@@ -21,6 +22,7 @@ function HomePage() {
     const [isCreateFoodOrderModalOpen, setIsCreateFoodOrderModalOpen] = useState(false)
     const [isCreateMenuModalOpen, setIsCreateMenuModalOpen] = useState(false)
     const [isChangeMenuModalOpen, setIsChangeMenuModalOpen] = useState(false)
+    const [isFoodManagementModalOpen, setIsFoodManagementModalOpen] = useState(false)
     const userAdminCheck = useSelector(state => state.session.user?.isAdmin)
     const [foodId, setFoodId] = useState(null)
     const [food, setFood] = useState(null)
@@ -83,6 +85,15 @@ function HomePage() {
         setIsChangeMenuModalOpen(true)
 
     }
+
+    const openFoodManagementModal = () => {
+        setIsFoodManagementModalOpen(true)
+    }
+
+    const closeFoodManagementModal = () => {
+        setIsFoodManagementModalOpen(false)
+    }
+
     return (
         <div>
             <h1>Home Page !</h1>
@@ -99,6 +110,7 @@ function HomePage() {
                                 <ul>
                                     {currentMenu?.current_menu?.foods.map(food => (
                                         <div className='menu-food-container'>
+                                            {userAdminCheck && <button className='modify-food-button' onClick={openFoodManagementModal}>Manage Food</button>}
                                             <li key={food.id} className='menu-food-li'>
                                                 <div className='menu-food'>
                                                     <h3 className='menu-food-name'>{food?.name}</h3>
@@ -138,7 +150,7 @@ function HomePage() {
                 {user && isCreateFoodOrderModalOpen && <CreateFoodOrderModal user_id ={user?.id} food={food} menu_id={currentMenu?.current_menu?.id} isOpen={isCreateFoodOrderModalOpen} onClose={closeCreateFoodOrderModal}/>}
                 {userAdminCheck && isCreateMenuModalOpen && <CreateMenuModal isOpen={isCreateMenuModalOpen} onClose={() => setIsCreateMenuModalOpen(false)}/>}
                 {userAdminCheck && isChangeMenuModalOpen && <ChangeMenuModal isOpen={isChangeMenuModalOpen} currMenuId={currentMenu.id} onClose={() => setIsChangeMenuModalOpen(false)}/>}
-
+                {user && isFoodManagementModalOpen && <FoodManagementModal menuId={currentMenu?.current_menu?.id} isOpen={isFoodManagementModalOpen} onClose={closeFoodManagementModal}/>}
             </div>
         </div>
     )
