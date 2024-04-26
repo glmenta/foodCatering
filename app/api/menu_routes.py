@@ -50,7 +50,7 @@ def create_new_menu():
     else:
         return jsonify(errors=form.errors), 400
 
-#add food to menu by day id
+#add food to menu
 @menu_routes.route('/<int:id>/update', methods=['GET', 'PATCH'])
 @login_required
 def add_food_to_menu(id):
@@ -90,7 +90,7 @@ def add_food_to_menu(id):
         return jsonify({'error': 'Invalid form data. Check your input and try again.'}), 400
 
 
-#remove food from menu by day id
+#remove food from menu
 @menu_routes.route('/<int:id>/remove_food', methods=['PATCH'])
 @login_required
 def remove_food_from_menu(id):

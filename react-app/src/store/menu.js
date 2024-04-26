@@ -7,6 +7,8 @@ const SET_CURRENT_MENU = "menu/SET_CURRENT_MENU";
 const CREATE_MENU = "menu/CREATE_MENU";
 const UPDATE_MENU = "menu/UPDATE_MENU";
 const DELETE_MENU = "menu/DELETE_MENU";
+const ADD_FOOD_TO_MENU = "menu/ADD_FOOD_TO_MENU";
+const REMOVE_FOOD_FROM_MENU = "menu/REMOVE_FOOD_FROM_MENU";
 
 const getAllMenus = (menus) => ({
     type: GET_ALL_MENUS,
@@ -43,6 +45,15 @@ const deleteMenu = (menu) => ({
     payload: menu
 })
 
+const addFoodToMenu = (menu) => ({
+    type: ADD_FOOD_TO_MENU,
+    payload: menu
+})
+
+const removeFoodFromMenu = (menu) => ({
+    type: REMOVE_FOOD_FROM_MENU,
+    payload: menu
+})
 
 export const getAllMenusThunk = () => async (dispatch) => {
     try {
@@ -127,6 +138,40 @@ export const createMenuThunk = (menu) => async (dispatch) => {
     }
 }
 
+export const addFoodToMenuThunk = (menuId, payload) => async (dispatch) => {
+    dispatch(getCurrentMenu())
+    try {
+        const response = await csrfFetch(`/api/menus/${menuId}/update`, {
+            method: "PATCH",
+            body: JSON.stringify(payload),
+        });
+        const updatedMenu = await response.json();
+        if (response.ok) {
+            dispatch(addFoodToMenu(updatedMenu));
+        }
+    }
+    catch (error) {
+        console.error('Error adding food to menu:', error);
+
+    }
+}
+
+export const removeFoodFromMenuThunk = (menuId, foodIds) => async (dispatch) => {
+    dispatch(getCurrentMenu())
+    try {
+        const response = await csrfFetch(`/api/menus/${menuId}/remove_food`, {
+            method: "PATCH",
+            body: JSON.stringify({ food: foodIds }),
+        });
+        const updatedMenu = await response.json();
+        if (response.ok) {
+            dispatch(removeFoodFromMenu(updatedMenu));
+        }
+    }
+    catch (error) {
+        console.error('Error removing food from menu:', error);
+    }
+}
 let initialState = {
     menus: {},
     menu: {},
@@ -165,10 +210,22 @@ export default function menuReducer(state = initialState, action) {
                 menu: action.payload
             };
         case DELETE_MENU:
+            const newMenus = { ...state.menus };
+            delete newMenus[action.payload.id];
             return {
                 ...state,
-                menu: action.payload
+                menus: newMenus,
+                menu: {}
             };
+        case ADD_FOOD_TO_MENU:
+            return {
+                ...state,
+                currentMenu: action.payload
+            }
+        case REMOVE_FOOD_FROM_MENU:
+            return {
+                ...state
+            }
         default:
             return state
     }
