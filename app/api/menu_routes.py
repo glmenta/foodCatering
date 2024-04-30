@@ -14,13 +14,25 @@ def get_all_menus():
     menus = FoodMenu.query.all()
     return {'menus': [menu.to_dict() for menu in menus]}
 
-#get menu by day id
+#get menu by id
 @menu_routes.route('/<int:id>')
-def get_menu_by_day_id(id):
+def get_menu_by_id(id):
     menu = FoodMenu.query.filter(FoodMenu.id == id).all()
     if menu is None:
         return jsonify({'error': 'Menu not found'}), 404
     return {'menu': [menu.to_dict() for menu in menu]}
+
+#get menu foods by id
+@menu_routes.route('/<int:id>/foods', methods=['GET'])
+@login_required
+def get_menu_foods(id):
+    menu = FoodMenu.query.get(id)
+    if not menu:
+        return jsonify({'error': 'Menu not found'}), 404
+
+    foods = [food.to_dict() for food in menu.foods]
+    return jsonify(foods), 200
+
 
 # create new menu
 @menu_routes.route('/new', methods=['POST'])
@@ -51,7 +63,7 @@ def create_new_menu():
         return jsonify(errors=form.errors), 400
 
 #add food to menu
-@menu_routes.route('/<int:id>/update', methods=['GET', 'PATCH'])
+@menu_routes.route('/<int:id>/update', methods=['PATCH'])
 @login_required
 def add_food_to_menu(id):
     user_id = current_user.id
@@ -64,30 +76,27 @@ def add_food_to_menu(id):
     if curr_menu is None:
         return jsonify({'error': 'Menu not found'}), 404
 
-    if request.method == 'GET':
-        form = MenuForm()
-        return jsonify({
-            'food_choices': form.food.choices
-        })
-
     data = request.get_json()
-    form = MenuForm(data=data)
-    form['csrf_token'].data = request.cookies['csrf_token']
 
-    if form.validate():
-        if 'name' in form.data:
-            curr_menu.name = form.data['name']
+    # Check if the 'food' key is present in the JSON data
+    if 'food' not in data:
+        return jsonify({'error': 'Food ID must be provided'}), 400
 
-        selected_food_ids = [int(form.data['food'])]
-        selected_food = Food.query.filter(Food.id.in_(selected_food_ids)).all()
+    # Assuming 'food' is an array of IDs
+    try:
+        selected_food_ids = [int(fid) for fid in data['food']]
+    except ValueError:
+        return jsonify({'error': 'Invalid food IDs provided, must be integers'}), 400
 
-        curr_menu.foods.extend(selected_food)
+    selected_foods = Food.query.filter(Food.id.in_(selected_food_ids)).all()
+    if not selected_foods:
+        return jsonify({'error': 'No valid food found for the provided IDs'}), 404
 
-        db.session.commit()
+    # Add the selected foods to the current menu
+    curr_menu.foods.extend(selected_foods)
+    db.session.commit()
 
-        return jsonify({'message': 'Food added to menu successfully', 'menu': curr_menu.to_dict()}), 200
-    else:
-        return jsonify({'error': 'Invalid form data. Check your input and try again.'}), 400
+    return jsonify({'message': 'Food added to menu successfully', 'menu': curr_menu.to_dict()}), 200
 
 
 #remove food from menu

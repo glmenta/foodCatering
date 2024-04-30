@@ -1,38 +1,45 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addFoodToMenuThunk, removeFoodFromMenuThunk } from '../../store/menu';
+import * as menuActions from '../../store/menu';
 import * as foodActions from '../../store/food';
 
 const FoodManagementModal = ({ menuId, isOpen, onClose }) => {
     const dispatch = useDispatch();
     const foods = useSelector(state => Object.values(state.food.allFoods));
+    const menuFoods = useSelector(state => Object.values(state.menu.menuFoods));
     const [operation, setOperation] = useState('add');
     const [selectedFoodId, setSelectedFoodId] = useState('');
     const selectRef = useRef(null);
 
     useEffect(() => {
         if (isOpen) {
-            dispatch(foodActions.getAllFoodsThunk()); // Fetches all foods when the modal is opened
+            if (operation === 'add') {
+                dispatch(foodActions.getAllFoodsThunk());
+            } else if (operation === 'remove') {
+                dispatch(menuActions.getMenuFoodsThunk(menuId));
+            }
             setTimeout(() => {
                 if (selectRef.current) {
-                    selectRef.current.focus(); // Focuses the select input after the modal opens
+                    selectRef.current.focus();
                 }
             }, 100);
         }
-    }, [dispatch, isOpen]);
+    }, [dispatch, isOpen, operation, menuId]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         const parsedId = parseInt(selectedFoodId, 10);
         if (operation === 'add') {
-            dispatch(addFoodToMenuThunk(menuId, { food: [parsedId] })); // Dispatch add
+            dispatch(menuActions.addFoodToMenuThunk(menuId, { food: [parsedId] }));
         } else {
-            dispatch(removeFoodFromMenuThunk(menuId, { food: [parsedId] })); // Dispatch remove
+            dispatch(menuActions.removeFoodFromMenuThunk(menuId, { food: [parsedId] }));
         }
-        onClose(); // Close modal after operation
+        onClose();
     };
 
     if (!isOpen) return null;
+
+    const currentFoods = operation === 'add' ? foods : menuFoods;
 
     return (
         <div className="modal-overlay">
@@ -49,7 +56,7 @@ const FoodManagementModal = ({ menuId, isOpen, onClose }) => {
                         required
                     >
                         <option value="">Select a food</option>
-                        {foods.map(food => (
+                        {currentFoods.map(food => (
                             <option key={food.id} value={food.id}>{food.name}</option>
                         ))}
                     </select>

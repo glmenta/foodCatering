@@ -2,6 +2,7 @@ import { csrfFetch } from "./csrf";
 import { getAllFoods } from "./food";
 const GET_ALL_MENUS = "menu/GET_ALL_MENUS";
 const GET_MENU = "menu/GET_MENU";
+const GET_MENU_FOODS = "menu/GET_MENU_FOODS";
 const GET_CURRENT_MENU = "menu/GET_CURRENT_MENU";
 const SET_CURRENT_MENU = "menu/SET_CURRENT_MENU";
 const CREATE_MENU = "menu/CREATE_MENU";
@@ -17,6 +18,11 @@ const getAllMenus = (menus) => ({
 
 const getMenu = (menu) => ({
     type: GET_MENU,
+    payload: menu
+})
+
+const getMenuFoods = (menu) => ({
+    type: GET_MENU_FOODS,
     payload: menu
 })
 
@@ -75,6 +81,18 @@ export const getMenuThunk = (menuId) => async (dispatch) => {
         const menu = await response.json();
         dispatch(getMenu(menu));
         return menu
+    }
+}
+
+export const getMenuFoodsThunk = (menuId) => async (dispatch) => {
+    const response = await csrfFetch(`/api/menus/${menuId}/foods`);
+    if (response.ok) {
+        const menu = await response.json();
+        dispatch(getMenuFoods(menu));
+        return menu
+    } else {
+        const errors = await response.json();
+        return errors
     }
 }
 
@@ -138,44 +156,51 @@ export const createMenuThunk = (menu) => async (dispatch) => {
     }
 }
 
-export const addFoodToMenuThunk = (menuId, payload) => async (dispatch) => {
-    dispatch(getCurrentMenu())
+export const addFoodToMenuThunk = (menuId, foodDetails) => async (dispatch) => {
     try {
-        const response = await csrfFetch(`/api/menus/${menuId}/update`, {
-            method: "PATCH",
-            body: JSON.stringify(payload),
+        const response = await fetch(`/api/menus/${menuId}/update`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(foodDetails),
         });
-        const updatedMenu = await response.json();
-        if (response.ok) {
-            dispatch(addFoodToMenu(updatedMenu));
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.error || "Failed to add food");
         }
+        dispatch(addFoodToMenu(data));  // Dispatch success action
+    } catch (error) {
+        console.error("Error adding food to menu:", error);
     }
-    catch (error) {
-        console.error('Error adding food to menu:', error);
+};
 
-    }
-}
 
 export const removeFoodFromMenuThunk = (menuId, foodIds) => async (dispatch) => {
-    dispatch(getCurrentMenu())
     try {
-        const response = await csrfFetch(`/api/menus/${menuId}/remove_food`, {
-            method: "PATCH",
+        const response = await fetch(`/api/menus/${menuId}/remove_food`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
             body: JSON.stringify({ food: foodIds }),
         });
-        const updatedMenu = await response.json();
+        const data = await response.json();
         if (response.ok) {
-            dispatch(removeFoodFromMenu(updatedMenu));
+            dispatch(removeFoodFromMenu(data));
+        } else {
+            throw new Error(data.error || "Failed to remove food");
         }
+    } catch (error) {
+        console.error("Error removing food from menu:", error);
     }
-    catch (error) {
-        console.error('Error removing food from menu:', error);
-    }
-}
+};
+
 let initialState = {
     menus: {},
     menu: {},
-    currentMenu: {}
+    currentMenu: {},
+    menuFoods: {}
 }
 
 export default function menuReducer(state = initialState, action) {
@@ -191,6 +216,11 @@ export default function menuReducer(state = initialState, action) {
                 ...state,
                 menu: action.payload
             };
+        case GET_MENU_FOODS:
+            return {
+                ...state,
+                menuFoods: action.payload
+            }
         case GET_CURRENT_MENU:
             return {
                 ...state,
