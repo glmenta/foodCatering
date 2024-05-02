@@ -114,7 +114,7 @@ def remove_food_from_menu(id):
         return jsonify({'error': 'Menu not found'}), 404
 
     data = request.get_json()
-
+    print('Data:', data)
     if 'food' not in data:
         return jsonify({'error': 'Food IDs to remove must be provided'}), 400
 
