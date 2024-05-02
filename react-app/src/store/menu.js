@@ -176,14 +176,15 @@ export const addFoodToMenuThunk = (menuId, foodDetails) => async (dispatch) => {
 };
 
 
-export const removeFoodFromMenuThunk = (menuId, foodIds) => async (dispatch) => {
+export const removeFoodFromMenuThunk = (menuId, foodData) => async (dispatch) => {
     try {
         const response = await fetch(`/api/menus/${menuId}/remove_food`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ food: foodIds }),
+            // body: JSON.stringify({ food: foodIds }),
+            body: JSON.stringify(foodData),
         });
         const data = await response.json();
         if (response.ok) {
