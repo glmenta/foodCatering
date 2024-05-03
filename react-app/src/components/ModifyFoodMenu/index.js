@@ -3,28 +3,29 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as menuActions from '../../store/menu';
 import * as foodActions from '../../store/food';
 
-const FoodManagementModal = ({ menuId, isOpen, onClose }) => {
+const FoodManagementModal = ({ handleMenuChange, menuId, isOpen, onClose }) => {
     const dispatch = useDispatch();
-    const foods = useSelector(state => Object.values(state.food.allFoods));
-    const menuFoods = useSelector(state => Object.values(state.menu.menuFoods));
+    const allFoods = useSelector(state => Object.values(state.food.allFoods));
+    const menuFoods = useSelector(state => Object.values(state.menu.menuFoods) || []);
+    console.log('menuFoods: ', menuFoods)
     const [operation, setOperation] = useState('add');
     const [selectedFoodId, setSelectedFoodId] = useState('');
     const selectRef = useRef(null);
 
     useEffect(() => {
+        dispatch(foodActions.getAllFoodsThunk());
+        dispatch(menuActions.getMenuFoodsThunk(menuId));
+    }, [dispatch, menuId, isOpen]);
+
+    useEffect(() => {
         if (isOpen) {
-            if (operation === 'add') {
-                dispatch(foodActions.getAllFoodsThunk());
-            } else if (operation === 'remove') {
-                dispatch(menuActions.getMenuFoodsThunk(menuId));
-            }
             setTimeout(() => {
                 if (selectRef.current) {
                     selectRef.current.focus();
                 }
             }, 100);
         }
-    }, [dispatch, isOpen, operation, menuId]);
+    }, [isOpen]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -34,12 +35,15 @@ const FoodManagementModal = ({ menuId, isOpen, onClose }) => {
         } else {
             dispatch(menuActions.removeFoodFromMenuThunk(menuId, { food: [parsedId] }));
         }
+        handleMenuChange();
         onClose();
     };
 
     if (!isOpen) return null;
 
-    const currentFoods = operation === 'add' ? foods : menuFoods;
+    const availableFoods = operation === 'add'
+        ? allFoods.filter(food => !menuFoods.find(mFood => mFood.id === food.id))
+        : menuFoods;
 
     return (
         <div className="modal-overlay">
@@ -56,7 +60,7 @@ const FoodManagementModal = ({ menuId, isOpen, onClose }) => {
                         required
                     >
                         <option value="">Select a food</option>
-                        {currentFoods.map(food => (
+                        {availableFoods.map(food => (
                             <option key={food.id} value={food.id}>{food.name}</option>
                         ))}
                     </select>

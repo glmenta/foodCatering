@@ -24,7 +24,7 @@ function HomePage() {
     const [isChangeMenuModalOpen, setIsChangeMenuModalOpen] = useState(false)
     const [isFoodManagementModalOpen, setIsFoodManagementModalOpen] = useState(false)
     const userAdminCheck = useSelector(state => state.session.user?.isAdmin)
-    const [foodId, setFoodId] = useState(null)
+    // const [foodId, setFoodId] = useState(null)
     const [food, setFood] = useState(null)
 
     useEffect(() => {
@@ -40,12 +40,6 @@ function HomePage() {
     useEffect(() => {
         dispatch(menuActions.getCurrentMenuThunk())
     }, [dispatch])
-
-    console.log('FOODS', foods)
-    console.log('MENUS', menus)
-    console.log('CURRENT MENU', currentMenu)
-    console.log('USER', user)
-    console.log('check if open', isCreateFoodOrderModalOpen)
 
     if (!currentMenu) {
         return <h1>Loading...</h1>
@@ -65,7 +59,7 @@ function HomePage() {
 
 
     const openCreateFoodOrderModal = (foodId) => {
-        setFoodId(foodId);
+        // setFoodId(foodId);
         const currFood = foods.find(food => food.id === foodId);
         setFood(currFood);
         setIsCreateFoodOrderModalOpen(true);
@@ -74,11 +68,6 @@ function HomePage() {
 
     const closeCreateFoodOrderModal = () => {
         setIsCreateFoodOrderModalOpen(false)
-    }
-
-    const getCurrFood = (foodId) => {
-        let food = foods.find(food => food.id === foodId)
-        setFood(food)
     }
 
     const openChangeMenuModal = () => {
@@ -92,6 +81,10 @@ function HomePage() {
 
     const closeFoodManagementModal = () => {
         setIsFoodManagementModalOpen(false)
+    }
+
+    const handleMenuChange = () => {
+        dispatch(menuActions.getCurrentMenuThunk())
     }
 
     return (
@@ -149,7 +142,7 @@ function HomePage() {
                 {user && isCreateFoodOrderModalOpen && <CreateFoodOrderModal user_id ={user?.id} food={food} menu_id={currentMenu?.current_menu?.id} isOpen={isCreateFoodOrderModalOpen} onClose={closeCreateFoodOrderModal}/>}
                 {userAdminCheck && isCreateMenuModalOpen && <CreateMenuModal isOpen={isCreateMenuModalOpen} onClose={() => setIsCreateMenuModalOpen(false)}/>}
                 {userAdminCheck && isChangeMenuModalOpen && <ChangeMenuModal isOpen={isChangeMenuModalOpen} currMenuId={currentMenu.id} onClose={() => setIsChangeMenuModalOpen(false)}/>}
-                {user && isFoodManagementModalOpen && <FoodManagementModal menuId={currentMenu?.current_menu?.id} isOpen={isFoodManagementModalOpen} onClose={closeFoodManagementModal}/>}
+                {user && isFoodManagementModalOpen && <FoodManagementModal handleMenuChange={handleMenuChange} menuId={currentMenu?.current_menu?.id} isOpen={isFoodManagementModalOpen} onClose={closeFoodManagementModal}/>}
             </div>
         </div>
     )
