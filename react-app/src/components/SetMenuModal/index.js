@@ -17,6 +17,7 @@ function SetMenuModal({ menus, currMenuId, onClose }) {
         try {
             await dispatch(menuActions.setCurrentMenuThunk(menuId));
             setSelectedMenu(menus.find(menu => menu.id === menuId));
+            onClose();
             setLoading(false);
         } catch (err) {
             setError('Failed to set the menu');

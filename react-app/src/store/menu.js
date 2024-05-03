@@ -254,9 +254,15 @@ export default function menuReducer(state = initialState, action) {
                 currentMenu: action.payload
             }
         case REMOVE_FOOD_FROM_MENU:
+            const updatedMenuFoods = action.payload;
             return {
-                ...state
-            }
+                ...state,
+                menuFoods: updatedMenuFoods,
+                currentMenu: {
+                    ...state.currentMenu,
+                    foods: updatedMenuFoods
+                }
+            };
         default:
             return state
     }
