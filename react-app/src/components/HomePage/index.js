@@ -24,9 +24,9 @@ function HomePage() {
     const [isChangeMenuModalOpen, setIsChangeMenuModalOpen] = useState(false)
     const [isFoodManagementModalOpen, setIsFoodManagementModalOpen] = useState(false)
     const userAdminCheck = useSelector(state => state.session.user?.isAdmin)
-    // const [foodId, setFoodId] = useState(null)
-    const [food, setFood] = useState(null)
 
+    const [food, setFood] = useState(null)
+    console.log('currentMenu: ', currentMenu)
     useEffect(() => {
         setIsLoaded(false)
         Promise.all([dispatch(foodActions.getAllFoodsThunk())]).then(() => setIsLoaded(true))
@@ -39,7 +39,7 @@ function HomePage() {
 
     useEffect(() => {
         dispatch(menuActions.getCurrentMenuThunk())
-    }, [dispatch])
+    }, [dispatch, currentMenu.id])
 
     if (!currentMenu) {
         return <h1>Loading...</h1>
@@ -141,7 +141,7 @@ function HomePage() {
                 )}
                 {user && isCreateFoodOrderModalOpen && <CreateFoodOrderModal user_id ={user?.id} food={food} menu_id={currentMenu?.current_menu?.id} isOpen={isCreateFoodOrderModalOpen} onClose={closeCreateFoodOrderModal}/>}
                 {userAdminCheck && isCreateMenuModalOpen && <CreateMenuModal isOpen={isCreateMenuModalOpen} onClose={() => setIsCreateMenuModalOpen(false)}/>}
-                {userAdminCheck && isChangeMenuModalOpen && <ChangeMenuModal isOpen={isChangeMenuModalOpen} currMenuId={currentMenu.id} onClose={() => setIsChangeMenuModalOpen(false)}/>}
+                {userAdminCheck && isChangeMenuModalOpen && <ChangeMenuModal onMenuChange={handleMenuChange} isOpen={isChangeMenuModalOpen} currMenuId={currentMenu.id} onClose={() => setIsChangeMenuModalOpen(false)}/>}
                 {user && isFoodManagementModalOpen && <FoodManagementModal handleMenuChange={handleMenuChange} menuId={currentMenu?.current_menu?.id} isOpen={isFoodManagementModalOpen} onClose={closeFoodManagementModal}/>}
             </div>
         </div>

@@ -7,10 +7,14 @@ const FoodManagementModal = ({ handleMenuChange, menuId, isOpen, onClose }) => {
     const dispatch = useDispatch();
     const allFoods = useSelector(state => Object.values(state.food.allFoods));
     const menuFoods = useSelector(state => Object.values(state.menu.menuFoods) || []);
-    console.log('menuFoods: ', menuFoods)
+    const currentMenu = useSelector(state => state.menu.currentMenu);
     const [operation, setOperation] = useState('add');
     const [selectedFoodId, setSelectedFoodId] = useState('');
     const selectRef = useRef(null);
+
+    console.log('menuFoods: ', menuFoods)
+    console.log('menuId: ', menuId)
+    console.log('currentMenu', currentMenu.current_menu)
 
     useEffect(() => {
         dispatch(foodActions.getAllFoodsThunk());
@@ -27,14 +31,14 @@ const FoodManagementModal = ({ handleMenuChange, menuId, isOpen, onClose }) => {
         }
     }, [isOpen]);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const parsedId = parseInt(selectedFoodId, 10);
-        if (operation === 'add') {
-            dispatch(menuActions.addFoodToMenuThunk(menuId, { food: [parsedId] }));
-        } else {
-            dispatch(menuActions.removeFoodFromMenuThunk(menuId, { food: [parsedId] }));
-        }
+        const action = operation === 'add'
+            ? menuActions.addFoodToMenuThunk(menuId, { food: [parsedId] })
+            : menuActions.removeFoodFromMenuThunk(menuId, { food: [parsedId] });
+
+        await dispatch(action);
         handleMenuChange();
         onClose();
     };
