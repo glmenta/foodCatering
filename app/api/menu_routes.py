@@ -78,11 +78,9 @@ def add_food_to_menu(id):
 
     data = request.get_json()
 
-    # Check if the 'food' key is present in the JSON data
     if 'food' not in data:
         return jsonify({'error': 'Food ID must be provided'}), 400
 
-    # Assuming 'food' is an array of IDs
     try:
         selected_food_ids = [int(fid) for fid in data['food']]
     except ValueError:
@@ -96,7 +94,7 @@ def add_food_to_menu(id):
     curr_menu.foods.extend(selected_foods)
     db.session.commit()
 
-    return jsonify({'message': 'Food added to menu successfully', 'menu': curr_menu.to_dict()}), 200
+    return jsonify({'message': 'Food added to menu successfully', 'current_menu': curr_menu.to_dict()}), 200
 
 
 #remove food from menu

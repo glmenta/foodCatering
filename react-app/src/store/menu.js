@@ -132,7 +132,7 @@ export const setCurrentMenuThunk = (menuId) => async (dispatch) => {
         }
         const menu = await response.json();
         dispatch(setCurrentMenu(menu));
-        return menu;
+        // return menu;
     } catch (error) {
         console.error('Error setting current menu:', error);
     }
