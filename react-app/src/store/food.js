@@ -116,7 +116,7 @@ export const createFoodThunk = (food) => async (dispatch) => {
 }
 
 export const updateFoodThunk = (food) => async (dispatch) => {
-    const response = await csrfFetch(`/api/foods/${food.id}`, {
+    const response = await csrfFetch(`/api/foods/${food.id}/edit`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(food)
@@ -132,7 +132,7 @@ export const updateFoodThunk = (food) => async (dispatch) => {
 }
 
 export const deleteFoodThunk = (foodId) => async (dispatch) => {
-    const response = await csrfFetch(`/api/foods/${foodId}`, {
+    const response = await csrfFetch(`/api/foods/${foodId}/delete`, {
         method: "DELETE"
     });
     if (response.ok) {
