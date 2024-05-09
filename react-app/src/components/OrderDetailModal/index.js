@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as orderActions from "../../store/order";
-// import './orderdetail.css'
 
 function OrderDetailModal({ isOpen, onClose, orderId, orderMessages }) {
     const dispatch = useDispatch();
