@@ -1,0 +1,105 @@
+
+.order-detail-modal {
+    background: rgba(0, 0, 0, 0.8);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050;
+}
+
+.order-detail-modal-header {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 50%;
+    max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.food-order-detail {
+    background: #f8f9fa;
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.food-order-detail div {
+    margin-bottom: 5px;
+}
+
+.food-order-detail img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+/* Styles for quantity update and save buttons */
+.food-order-detail button {
+    margin-right: 5px;
+    padding: 5px 10px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.food-order-detail button:hover {
+    background-color: #0056b3;
+}
+
+.confirmation-modal {
+    position: fixed;
+    background: rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.confirmation-modal div {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    text-align: center;
+}
+
+.order-messages {
+    margin-top: 20px;
+}
+
+.order-messages div {
+    background: #f0f0f0;
+    padding: 8px;
+    border-radius: 4px;
+    margin-bottom: 5px;
+}
+
+/* Additional styling for price and actions */
+.order-detail-modal-header div:last-child {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.order-detail-modal-header button {
+    padding: 10px 15px;
+    margin-top: 20px;
+}
+
+/* Styling for the 'Back to Orders' button with a less prominent style */
+.order-detail-modal-header button:last-child {
+    background-color: #6c757d;
+}
+
+.order-detail-modal-header button:last-child:hover {
+    background-color: #545b62;
+}
