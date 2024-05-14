@@ -4,13 +4,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import * as orderActions from '../../store/order';
 import * as sessionActions from '../../store/session';
-import OrderDetailModal from '../OrderDetailModal';
+import CheckOrderModal from './modal'
 
 function CheckOrdersPage() {
     const dispatch = useDispatch();
     const allOrders = useSelector(state => (state.order.allOrders.orders))
     const user = useSelector(state => state.session.user)
-    const [isLoaded, setIsLoaded] = useState(false)
+
     const [isOrderModalOpen, setIsOrderModalOpen] = useState(false)
     const [orderId, setOrderId] = useState(null)
 
@@ -53,7 +53,7 @@ function CheckOrdersPage() {
 
                         </div>
                     ))}
-                    {isOrderModalOpen && <OrderDetailModal isOpen={isOrderModalOpen} onClose={closeOrderModal} orderId={orderId}/>}
+                    {isOrderModalOpen && <CheckOrderModal isOpen={isOrderModalOpen} onClose={closeOrderModal} orderId={orderId}/>}
                     </ul>
 
             </div>
