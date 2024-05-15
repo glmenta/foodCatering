@@ -6,11 +6,14 @@ function ManageFoodModal({ isOpen, onClose, foodId }) {
     const dispatch = useDispatch();
     const [isLoaded, setIsLoaded] = useState(false);
     const [food, setFood] = useState({ name: '', description: '', price: 0 });
-    console.log('foodId: ', foodId)
+    const [imageUrl, setImageUrl] = useState("");
+    const [images, setImages] = useState([]);
+
     useEffect(() => {
         if (foodId) {
             dispatch(foodActions.getFoodThunk(foodId)).then(foodData => {
                 setFood(foodData);
+                setImages(foodData.food_images || []);
                 setIsLoaded(true);
             });
         }
@@ -19,6 +22,23 @@ function ManageFoodModal({ isOpen, onClose, foodId }) {
     const handleChange = (event) => {
         const { name, value } = event.target;
         setFood(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleImageUrlChange = (event) => {
+        setImageUrl(event.target.value);
+    };
+
+    const handleAddImage = async () => {
+        if (imageUrl) {
+            const newImage = await dispatch(foodActions.addImageToFoodThunk(foodId, imageUrl));
+            setImages([...images, newImage]);
+            setImageUrl("");
+        }
+    };
+
+    const handleDeleteImage = async (imageId) => {
+        await dispatch(foodActions.removeImageFromFoodThunk(foodId, imageId));
+        setImages(images.filter(image => image.id !== imageId));
     };
 
     const handleSubmit = async (event) => {
@@ -59,6 +79,22 @@ function ManageFoodModal({ isOpen, onClose, foodId }) {
 
                     <button type="button" onClick={onClose}>Cancel</button>
                 </form>
+
+                <div className="image-management">
+                    <label>Add Image URL:
+                        <input type="text" value={imageUrl} onChange={handleImageUrlChange} />
+                    </label>
+                    <button type="button" onClick={handleAddImage}>Add Image</button>
+
+                    <div className="image-list">
+                        {images.map(image => (
+                            <div key={image.id} className="image-item">
+                                <img src={image.url} alt="Food" />
+                                <button type="button" onClick={() => handleDeleteImage(image.id)}>Delete</button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
             </div>
         </div>
     )

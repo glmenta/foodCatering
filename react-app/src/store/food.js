@@ -11,6 +11,9 @@ const GET_USER_FOOD_ORDERS = "food/GET_USER_FOOD_ORDERS";
 const CREATE_FOOD_ORDER = "food/CREATE_FOOD_ORDER";
 const DELETE_FOOD_ORDER = "food/DELETE_FOOD_ORDER";
 const REMOVE_FOOD_FROM_ORDER = "food/REMOVE_FOOD_FROM_ORDER";
+const ADD_IMAGE_TO_FOOD = "food/ADD_IMAGE_TO_FOOD";
+const REMOVE_IMAGE_FROM_FOOD = "food/REMOVE_IMAGE_FROM_FOOD";
+
 
 export const getAllFoods = (foods) => {
     return {
@@ -80,6 +83,17 @@ export const deleteFoodOrder = (food) => {
         payload: food
     }
 }
+
+export const addImageToFood = (foodId, image) => ({
+    type: ADD_IMAGE_TO_FOOD,
+    payload: { foodId, image }
+});
+
+export const removeImageFromFood = (foodId, imageId) => ({
+    type: REMOVE_IMAGE_FROM_FOOD,
+    payload: { foodId, imageId }
+});
+
 
 export const getAllFoodsThunk = () => async (dispatch) => {
     const response = await csrfFetch("/api/foods");
@@ -217,6 +231,55 @@ export const deleteFoodOrderThunk = (user_id, food_order_id) => async (dispatch)
         throw error;
     }
 }
+
+export const addImageToFoodThunk = (foodId, imageUrl) => async (dispatch) => {
+    try {
+        const response = await csrfFetch(`/api/foods/${foodId}/images/new`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ url: imageUrl }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            dispatch(addImageToFood(foodId, data.image));
+            return data.image;
+        } else {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to add image");
+        }
+    } catch (error) {
+        console.error("Error adding image:", error);
+        throw error;
+    }
+};
+
+
+export const removeImageFromFoodThunk = (foodId, imageId) => async (dispatch) => {
+    console.log('inside thunk: ', foodId, imageId)
+    try {
+        const response = await csrfFetch(`/api/foods/${foodId}/images/${imageId}/delete`, {
+            method: "DELETE",
+        });
+
+        if (response.ok) {
+            console.log('inside thunk: ', response)
+            const data = await response.json();
+            dispatch(removeImageFromFood(foodId, imageId));
+            return data;
+        } else {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to delete image");
+        }
+    } catch (error) {
+        console.error("Error deleting image:", error);
+        throw error;
+    }
+};
+
+
 const initialState = {
     allFoods: {},
     food: {},
@@ -262,6 +325,18 @@ export default function foodReducer(state = initialState, action) {
             console.log('inside delete food order', action.payload);
             delete newState.currentFoodOrders[action.payload.id];
             return newState
+        case ADD_IMAGE_TO_FOOD:
+            if (!newState.allFoods[action.payload.foodId].images) {
+                newState.allFoods[action.payload.foodId].images = [];
+            }
+            newState.allFoods[action.payload.foodId].images.push(action.payload.image);
+            return newState;
+        case REMOVE_IMAGE_FROM_FOOD:
+            const food = newState.allFoods[action.payload.foodId];
+            if (food && food.food_images) {
+                food.food_images = food.food_images.filter(image => image.id !== action.payload.imageId);
+            }
+            return newState;
         default:
             return state
     }
