@@ -188,7 +188,7 @@ def create_food_image(id):
     if food is None:
         return jsonify({'error': 'Food not found'}), 404
 
-    if current_user.id != food.user_id:
+    if current_user.isAdmin == False:
         return jsonify({'error': 'You cannot add images to another user\'s food'}), 401
 
     data = request.get_json()
@@ -211,10 +211,10 @@ def create_food_image(id):
 def delete_food_image(food_id, image_id):
     food = Food.query.get(food_id)
     image = FoodImage.query.get(image_id)
-    user_id = current_user.id
+
     if food is None:
         return jsonify({'error': 'Food not found'}), 404
-    if user_id != food.user_id:
+    if current_user.isAdmin == False:
         return jsonify({'error': 'You cannot delete images from another user\'s food'}), 401
     if image is None:
         return jsonify({'error': 'Image not found'}), 404
