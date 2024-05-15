@@ -93,6 +93,11 @@ function HomePage() {
             <div className='food-button'>
                 <button onClick={navigateToFoodPage}>View All Foods</button>
             </div>
+            <div className='food-images'>
+                {foods?.map(food => (
+                    <img src={food?.food_images[0]?.url} alt={food?.name} className='food-img'/>
+                ))}
+            </div>
             <div className='menu-button'>
                                 {userAdminCheck &&
                                     <div className='admin-buttons'>
