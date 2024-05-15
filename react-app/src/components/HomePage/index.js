@@ -93,19 +93,22 @@ function HomePage() {
             <div className='food-button'>
                 <button onClick={navigateToFoodPage}>View All Foods</button>
             </div>
+
+            <div className='menu-button'>
+                {userAdminCheck &&
+                    <div className='admin-buttons'>
+                        <button onClick={() => setIsCreateMenuModalOpen(true)}>Create Menu</button>
+                        <button onClick={openChangeMenuModal}>Change Menu</button>
+                    </div>
+                }
+            </div>
+
             <div className='food-images'>
                 {foods?.map(food => (
                     <img src={food?.food_images[0]?.url} alt={food?.name} className='food-img'/>
                 ))}
             </div>
-            <div className='menu-button'>
-                                {userAdminCheck &&
-                                    <div className='admin-buttons'>
-                                        <button onClick={() => setIsCreateMenuModalOpen(true)}>Create Menu</button>
-                                        <button onClick={openChangeMenuModal}>Change Menu</button>
-                                    </div>
-                                }
-                            </div>
+
             <div className='current-menu-container'>
                 {isLoaded && Object.keys(currentMenu).length > 0 ? (
                     <div className='current-menu-container'>
