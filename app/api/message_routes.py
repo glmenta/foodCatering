@@ -56,8 +56,6 @@ def send_message_to_customer(order_id):
         db.session.add(message)
         try:
             db.session.commit()
-            # socketio.emit('customer_message', {'message': 'New message from admin', 'sent_message': message.to_dict()}, room=order.user_id)
-
             return jsonify({'message': 'Message sent to customer!', 'sent_message': message.to_dict(), 'order': order.to_dict()}), 200
         except Exception as e:
             db.session.rollback()
