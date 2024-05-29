@@ -66,38 +66,34 @@ def send_message_to_customer(order_id):
 @message_routes.route('/send-to-kitchen/<int:order_id>', methods=['GET', 'POST'])
 @login_required
 def send_message_to_kitchen(order_id):
-    form = MessageForm()
+    data = request.get_json()
+
+    sender_id = data.get('sender_id')
+    receiver_id = data.get('receiver_id')
+    message_content = data.get('message')
 
     order = Order.query.filter(and_(Order.id == order_id, Order.user_id == current_user.id)).first()
 
-    admins = User.query.filter_by(isAdmin=True).all()
-    print('admins', admins)
     if not order:
         return jsonify({'error': 'Order not found'}), 404
 
-    print(order.user_id, current_user.id)
-    print('order: ', order.to_dict())
     if order.user_id != current_user.id:
         return jsonify({'error': 'This order does not belong to you'}), 403
 
-    form['csrf_token'].data = request.cookies['csrf_token']
-    if form.validate_on_submit():
-        try:
-            for admin in admins:
-                message = Message(
-                    sender_id=current_user.id,
-                    receiver_id=admin.id,
-                    order_id=order_id,
-                    content=form.message.data
-                )
-                db.session.add(message)
-                db.session.commit()
-            return jsonify({'message': 'Message sent to all admins!', 'sent_message': message.to_dict()}), 200
-        except Exception as e:
-            db.session.rollback()
-            return jsonify({'error': 'Failed to send message. Error: {}'.format(str(e))}), 500
-    else:
-        return jsonify({'errors': form.errors}), 400
+    try:
+        message = Message(
+            sender_id=sender_id,
+            receiver_id=receiver_id,
+            order_id=order_id,
+            content=message_content
+        )
+        db.session.add(message)
+        db.session.commit()
+        return jsonify({'message': 'Message sent!', 'sent_message': message.to_dict()}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': 'Failed to send message. Error: {}'.format(str(e))}), 500
+
 
 @message_routes.route('/<int:message_id>', methods=['DELETE'])
 @login_required
