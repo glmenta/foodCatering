@@ -56,7 +56,7 @@ function OrderDetailModal({ isOpen, onClose, orderId, orderMessages }) {
             order_id: orderId
         };
         try {
-            await dispatch(messageActions.createMessageThunk(message));
+            await dispatch(messageActions.sendMessageToKitchenThunk(message));
             setMessageContent('');
             setShowModal(false);
         } catch (error) {
