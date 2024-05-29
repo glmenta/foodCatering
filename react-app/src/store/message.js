@@ -88,20 +88,33 @@ export const getMessageThunk = (messageId) => async (dispatch) => {
     }
 }
 
-export const createMessageThunk = (message) => async (dispatch) => {
-    const response = await csrfFetch('/api/messages', {
+export const createMessageThunk = (message) => async (dispatch, getState) => {
+    const state = getState();
+    const senderId = state.session.user.id;
+    const recipientId = 1; // Admin user ID
+
+    const response = await csrfFetch(`/api/messages/send-to-kitchen/${message.orderId}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify(message),
+        body: JSON.stringify({
+            sender_id: senderId,
+            receiver_id: recipientId,
+            message: message.message
+        }),
     });
+
     if (response.ok) {
         const newMessage = await response.json();
-        dispatch(createMessage(newMessage));
-        return newMessage
+        dispatch(createMessage(newMessage.sent_message));
+        return newMessage;
+    } else {
+        const errors = await response.json();
+        return { errors: errors.errors || [errors.error] };
     }
 }
+
 
 export const deleteMessageThunk = (message) => async (dispatch) => {
     const response = await csrfFetch(`/api/messages/${message.id}`, {

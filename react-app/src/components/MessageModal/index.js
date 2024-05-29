@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import * as messageActions from '../../store/message';
 
 
-function UserMessageModal({}) {
+function UserMessageModal({isOpen, onClose, orderId}) {
     const dispatch = useDispatch();
     const history = useHistory();
     const messageHistory = useSelector(state => state.message.userMessages);

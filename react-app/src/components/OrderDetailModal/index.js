@@ -105,16 +105,8 @@ function OrderDetailModal({ isOpen, onClose, orderId, orderMessages }) {
                     <button onClick={() => setShowModal(true)}>Send Message</button>
                     <button onClick={onClose}>Back to Orders</button>
                 </div>
-                <OrderMessageModal show={showModal} onClose={() => setShowModal(false)} orderId={orderId}>
-                    <form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }}>
-                        <textarea
-                            value={messageContent}
-                            onChange={(e) => setMessageContent(e.target.value)}
-                            placeholder="Type your message here..."
-                        ></textarea>
-                        <button type="submit">Send</button>
-                    </form>
-                </OrderMessageModal>
+                <OrderMessageModal show={showModal} onClose={() => setShowModal(false)} orderId={orderId}/>
+
             </div>
         )
     );
