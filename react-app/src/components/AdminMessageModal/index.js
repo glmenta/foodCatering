@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { sendMessageToKitchenThunk } from "../../store/message";
+import { sendMessageToCustomerThunk } from "../../store/message";
 
-function OrderMessageModal({ orderId, isOpen, onClose }) {
+function CustomerMessageModal({ orderId, isOpen, onClose }) {
     const dispatch = useDispatch();
     const [errors, setErrors] = useState([]);
     const [message, setMessage] = useState("");
@@ -27,7 +27,7 @@ function OrderMessageModal({ orderId, isOpen, onClose }) {
         };
 
         try {
-            const result = await dispatch(sendMessageToKitchenThunk(newMessage));
+            const result = await dispatch(sendMessageToCustomerThunk(newMessage));
             if (result.errors) {
                 setErrors(result.errors);
             } else {
@@ -43,7 +43,7 @@ function OrderMessageModal({ orderId, isOpen, onClose }) {
             <div className="modal-background" onClick={handleClose}></div>
             <div className="modal-content">
                 <div className="box">
-                    <h2 className="title">Send Message</h2>
+                    <h2 className="title">Send Message to Customer</h2>
                     <form onSubmit={handleSubmit}>
                         {errors.length > 0 && (
                             <div className="notification is-danger">
@@ -84,4 +84,4 @@ function OrderMessageModal({ orderId, isOpen, onClose }) {
     );
 }
 
-export default OrderMessageModal;
+export default CustomerMessageModal;
