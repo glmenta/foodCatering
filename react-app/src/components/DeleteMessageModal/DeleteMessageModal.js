@@ -36,7 +36,7 @@ function DeleteMessageModal({ messageId, isOpen, onClose }) {
                 <div className="box">
                     <h2 className="title">Delete Message</h2>
                     {errors.length > 0 && (
-                        <div className="notification is-danger">
+                        <div className="error">
                             <ul>
                                 {errors.map((error, idx) => (
                                     <li key={idx}>{error}</li>
