@@ -12,6 +12,7 @@ import CheckOrdersPage from "./components/CheckOrdersPage/index.js";
 import AdminOrderPage from "./components/AdminOrderPage/index.js";
 import CreateFoodPage from "./components/CreateFoodPage/index.js";
 import UserFoodOrdersPage from "./components/UserFoodOrdersPage/index.js";
+import LandingPage from "./components/LandingPage/index.js";
 
 function App() {
   const dispatch = useDispatch();
@@ -32,6 +33,9 @@ function App() {
             <SignupFormPage />
           </Route>
           <Route exact path="/">
+            <LandingPage />
+          </Route>
+          <Route exact path="/home">
             <HomePage />
           </Route>
           <Route exact path="/foods">
