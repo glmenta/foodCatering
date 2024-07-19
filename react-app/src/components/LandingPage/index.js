@@ -1,6 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom/cjs/react-router-dom";
-import { useDispatch, useSelector, useEffect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useState, useEffect } from "react";
 import * as foodActions from "../../store/food";
 
 export default function LandingPage() {
