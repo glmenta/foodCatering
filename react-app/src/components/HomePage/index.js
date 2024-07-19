@@ -102,11 +102,11 @@ function HomePage() {
                 }
             </div>
 
-            <div className='food-images'>
+            {/* <div className='food-images'>
                 {foods?.map(food => (
                     <img src={food?.food_images[0]?.url} alt={food?.name} className='food-img'/>
                 ))}
-            </div>
+            </div> */}
 
             <div className='current-menu-container'>
                 {isLoaded && Object.keys(currentMenu).length > 0 ? (
