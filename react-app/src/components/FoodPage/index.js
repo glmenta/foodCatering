@@ -12,6 +12,7 @@ function FoodPage() {
     const history = useHistory();
     const dispatch = useDispatch();
     const foods = useSelector(state => Object.values(state.food.allFoods));
+    const user = useSelector(state => state.session.user)
     const [isLoaded, setIsLoaded] = useState(false);
     const [error, setError] = useState(null);
     const [isFoodModalOpen, setIsFoodModalOpen] = useState(false);
@@ -70,10 +71,12 @@ function FoodPage() {
                                 <div className='food-item-contents'>
                                     <li className='food-name'>{food.name}</li>
                                     <img src={food.food_images[0]?.url} alt={food.name} className='food-img'/>
-                                    <button onClick={(e) => {
-                                        e.stopPropagation();
-                                        openManageModal(food.id);
-                                    }}>Edit</button>
+                                    {user && user.isAdmin &&
+                                        <button onClick={(e) => {
+                                            e.stopPropagation();
+                                            openManageModal(food.id);
+                                        }}>Edit</button>
+                                    }
                                 </div>
                             </div>
                         ))
